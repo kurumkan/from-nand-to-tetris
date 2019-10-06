@@ -1,8 +1,3 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-// File name: projects/05/CPU.hdl
-
 /**
  * The Hack CPU (Central Processing unit), consisting of an ALU,
  * two registers named A and D, and a program counter named PC.
@@ -39,5 +34,58 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+
+    Not(in = instruction[15], out = isAInstruction);
+    Mux16(a = outALU, b = instruction, sel = isAInstruction, out = inA);
+    
+    // addressM
+    Or(a = isAInstruction, b = instruction[5], out = loadA); // instruction[5] === d1 (should write to A register?)
+    Register(in = inA, load = loadA, out = A, out[0..14] = addressM);
+
+    And(a = instruction[15], b = instruction[12], out = isM); // instruction[12] === a bit of c instruction
+    Mux16(a = A, b = inM, sel = isM, out = AM); 
+
+    And(a = instruction[15], b = instruction[4], out = writeD); // instruction[4] === d2 (should write to D register?)
+    Register(in = outALU, load = writeD, out = D); 
+    
+    // outM
+    ALU(
+        x=D, 
+        y=AM, 
+        zx = instruction[11], // c1
+        nx = instruction[10], // c2
+        zy = instruction[9],  // c3
+        ny = instruction[8],  // c4
+        f = instruction[7],   // c5
+        no = instruction[6],  // c6
+        out = outM, 
+        out = outALU,
+        zr = zr, 
+        ng = ng
+    );
+
+
+    // writeM?
+    And(a=instruction[15], b=instruction[3], out=writeM); // instruction[3] === d3 (should write to RAM?)
+
+    // PC   
+    // load logic
+
+    // isPositive?
+    Or(a = zr, b = ng, out = le);
+    Not(in = le, out = pz);
+
+    And(a = ng, b = instruction[2], out = j0);
+    And(a = zr, b = instruction[1], out = j1);
+    And(a = pz, b = instruction[0], out = j2);
+
+    Or(a = j0, b = j1, out = orj0j1);
+    Or(a = orj0j1, b = j2, out = shouldJump);
+
+    And(a = instruction[15], b = shouldJump, out = load);
+
+    // inc logic    
+    Not(in = load, out = inc);    
+
+    PC(in = A, load = load, inc = inc, reset = reset, out[0..14] = pc);
 }
