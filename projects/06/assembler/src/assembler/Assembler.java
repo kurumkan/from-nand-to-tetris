@@ -9,8 +9,11 @@ import java.util.HashMap;
 
 public class Assembler {
     public static void main(String[] args) throws Exception {        
-        String inputFile = "../pong/Pong.asm";
-        String outputFile = "../pong/Pong.hack";
+        String inputFile = args[0];
+        String outputFile = inputFile.substring(0, inputFile.length() - 3) + "hack";
+                
+        System.out.println("Input file: " + inputFile);
+        System.out.println("Output file: " + outputFile);
         
         HashMap<String, String> reservedWordsMap = new HashMap<String, String>();
         reservedWordsMap.put("SP", "0");
@@ -154,9 +157,6 @@ public class Assembler {
                         nextVariableAddress += 1;
                     }
                 }               
-                
-                
-                
                 
                 int decimal = Integer.parseInt(value);       
                 String binary = Integer.toString(decimal, 2);
