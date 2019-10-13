@@ -9,8 +9,8 @@ import java.util.HashMap;
 
 public class Assembler {
     public static void main(String[] args) throws Exception {        
-        String inputFile = "../rect/RectL.asm";
-        String outputFile = "../rect/RectL.hack";
+        String inputFile = "../pong/Pong.asm";
+        String outputFile = "../pong/Pong.hack";
         
         HashMap<String, String> reservedWordsMap = new HashMap<String, String>();
         reservedWordsMap.put("SP", "0");
@@ -89,16 +89,14 @@ public class Assembler {
         
         ArrayList<String> lines = new ArrayList<>();
         
-        HashMap<String, String> labelsMap = new HashMap<String, String>();
-        HashMap<String, String> variablesMap = new HashMap<String, String>();
+        HashMap<String, String> labelsMap = new HashMap<String, String>();        
         
         String line = "";
         
         BufferedReader reader = new BufferedReader(new FileReader(inputFile)); 
         
         int lineCounter = 0;
-        int nextVariableAddress = 16;
-        
+                
         while ((line = reader.readLine()) != null) {
             int commentStart = line.indexOf("//");            
             line = line.substring(0, commentStart < 0 ? line.length() : commentStart).trim();
@@ -106,15 +104,16 @@ public class Assembler {
             
             if (isEmpty) {
                 continue;
-            }
+            }            
             
-            // replace reserved constants with their respective values
             if(line.startsWith("@")) {
-                String value = reservedWordsMap.get(line.substring(1));
+                String suffix = line.substring(1);                
+                String labelValue = reservedWordsMap.get(suffix);                
                 
-                if(value != null) {
-                    line = "@" + value;
-                }
+                if(labelValue != null) {
+                    // replace reserved constants with their respective values                    
+                    line = "@" + labelValue;
+                } 
             }
             
             // add the label to the table
@@ -125,23 +124,40 @@ public class Assembler {
             }
             
             lines.add(line);
-            lineCounter += 1;
-            
-            System.out.println("ff" + line);
+            lineCounter += 1;            
         }        
         reader.close();
     
+        HashMap<String, String> variablesMap = new HashMap<String, String>();
+        int nextVariableAddress = 16;
         
 	for (String command : lines) {
             boolean isAInstruction = command.startsWith("@");
 
-            if (isAInstruction) {		                    
-                System.out.println(command + "A");                
+            if (isAInstruction) {		                                                 
                 String value = command.substring(1);
+                boolean isVariable = !value.matches("-?\\d+");
                 String label = labelsMap.get(value);                
+                
                 if(label != null) {
                     value = label;
-                }                
+                } else if(isVariable) {
+                    // add variable to table                    
+                    String variableValue = variablesMap.get(value);
+                    
+                    if(variableValue != null) {
+                        value = variableValue;
+                    } else {                        
+                        variablesMap.put(value, nextVariableAddress + "");
+                        value = nextVariableAddress + "";
+                        
+                        nextVariableAddress += 1;
+                    }
+                }               
+                
+                
+                
+                
                 int decimal = Integer.parseInt(value);       
                 String binary = Integer.toString(decimal, 2);
                 binary = String.format("%016d", Long.parseLong(binary));               
@@ -197,16 +213,10 @@ public class Assembler {
                 }
 
                 String binary = "111" + addressBit + comp + destination + jump;                
-                result = result + binary + "\n";
-                System.out.println(command + "C");
+                result = result + binary + "\n";                
             }
         }
-
-        System.out.println("==================================================\n");
-        System.out.println(result);
-
-
-
+        
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
         writer.write(result);
 
