@@ -189,7 +189,7 @@ public class CodeWriter {
                 "	@SP\n" +
                 "	D=M+1\n" +
                 "	@SP\n" +
-                "	M=D", index, index);
+                "	M=D\n", index, index);
             
             this.writer.write(result);
         }
