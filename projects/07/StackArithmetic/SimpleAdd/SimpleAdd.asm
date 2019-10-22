@@ -7,7 +7,8 @@
 	@SP
 	D=M+1
 	@SP
-	M=D// push constant 8 
+	M=D
+// push constant 8 
 	@8
 	D=A
 	@SP
@@ -16,7 +17,8 @@
 	@SP
 	D=M+1
 	@SP
-	M=D// add
+	M=D
+// add
 	@SP
 	D=M-1
 	@SP

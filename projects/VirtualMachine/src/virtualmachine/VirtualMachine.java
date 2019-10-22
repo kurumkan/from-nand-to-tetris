@@ -4,8 +4,8 @@ import static virtualmachine.CommandTypes.*;
 public class VirtualMachine {
     public static void main(String[] args) {
         try {
-            Parser parser = new Parser("../07/StackArithmetic/SimpleAdd/SimpleAdd.vm");            
-            CodeWriter writer = new CodeWriter("../07/StackArithmetic/SimpleAdd/SimpleAdd.asm");
+            Parser parser = new Parser("../07/StackArithmetic/StackTest/StackTest.vm");            
+            CodeWriter writer = new CodeWriter("../07/StackArithmetic/StackTest/StackTest.asm");
             
             while(parser.hasMoreCommands()) {
                 parser.advance();
