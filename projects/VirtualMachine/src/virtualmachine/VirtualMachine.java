@@ -6,6 +6,10 @@ public class VirtualMachine {
         try {
             Parser parser = new Parser("../07/StackArithmetic/StackTest/StackTest.vm");            
             CodeWriter writer = new CodeWriter("../07/StackArithmetic/StackTest/StackTest.asm");
+//            Parser parser = new Parser("../07/StackArithmetic/SimpleAdd/SimpleAdd.vm");            
+//            CodeWriter writer = new CodeWriter("../07/StackArithmetic/SimpleAdd/SimpleAdd.asm");
+//            Parser parser = new Parser("../07/MemoryAccess/BasicTest/BasicTest.vm");            
+//            CodeWriter writer = new CodeWriter("../07/MemoryAccess/BasicTest/BasicTest.asm");            
             
             while(parser.hasMoreCommands()) {
                 parser.advance();
@@ -26,6 +30,11 @@ public class VirtualMachine {
                         break;
                     }                    
                     case C_POP: {
+                        String command = "pop";
+                        String segment = parser.arg1();
+                        int index = parser.arg2();
+                        writer.writePushPop(command, segment, index);
+                        System.out.println(command);
                         break;
                     }
                     default: {
