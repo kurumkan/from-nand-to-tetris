@@ -3,13 +3,16 @@ package virtualmachine;
 import java.util.HashMap;
 
 public class Commands {
-    public static final HashMap<String, String>  arithmeticMap;
-    public static final HashMap<String, String>  stackMap;
+    public static final HashMap<String, String>  arithmeticCommands;
+    public static final HashMap<String, String>  pushCommands;
+    public static final HashMap<String, String>  popCommands;
+    
+    private Commands() { } 
     
     static {
         // arithmetic operations
-        arithmeticMap = new HashMap<String, String>();        
-        arithmeticMap.put("add", 
+        arithmeticCommands = new HashMap<String, String>();        
+        arithmeticCommands.put("add", 
             "// add\n" +
             "	@SP\n" +
             "	D=M-1\n" +
@@ -22,7 +25,7 @@ public class Commands {
             "	A=M-1\n" +
             "	M=D+M\n"
         );
-        arithmeticMap.put("sub", 
+        arithmeticCommands.put("sub", 
             "// sub\n" +
             "	@SP\n" +
             "	D=M-1\n" +
@@ -35,13 +38,13 @@ public class Commands {
             "	A=M-1\n" +
             "	M=M-D\n"
         );
-        arithmeticMap.put("neg", 
+        arithmeticCommands.put("neg", 
             "// neg\n" +
             "	@SP\n" +
             "	A=M-1\n" +
             "	M=-M\n"
         );
-        arithmeticMap.put("eq",  
+        arithmeticCommands.put("eq",  
             "// eq\n" +
             "	@SP\n" +
             "	D=M-1\n" +
@@ -66,7 +69,7 @@ public class Commands {
             "	M=-1\n" +
             "(END_EQ_%1$d)\n"
         );
-        arithmeticMap.put("gt",  
+        arithmeticCommands.put("gt",  
             "// gt\n" +
             "	@SP\n" +
             "	D=M-1\n" +
@@ -91,7 +94,7 @@ public class Commands {
             "	M=-1\n" +
             "(END_GT_%1$d)\n"
         );
-        arithmeticMap.put("lt",  
+        arithmeticCommands.put("lt",  
             "// lt\n" +
             "	@SP\n" +
             "	D=M-1\n" +
@@ -116,7 +119,7 @@ public class Commands {
             "	M=-1\n" +
             "(END_LT_%1$d)\n"
         );
-        arithmeticMap.put("and",  
+        arithmeticCommands.put("and",  
             "// and\n" +
             "	@SP\n" +
             "	D=M-1\n" +
@@ -129,7 +132,7 @@ public class Commands {
             "	A=M-1\n" +
             "	M=D&M\n"
         );
-        arithmeticMap.put("or",  
+        arithmeticCommands.put("or",  
             "// or\n" +
             "	@SP\n" +
             "	D=M-1\n" +
@@ -142,7 +145,7 @@ public class Commands {
             "	A=M-1\n" +
             "	M=D|M\n"
         );
-        arithmeticMap.put("not",  
+        arithmeticCommands.put("not",  
             "// not\n" +
             "	@SP\n" +
             "	A=M-1\n" +
@@ -151,13 +154,258 @@ public class Commands {
         
         
         // stack operations
-        stackMap = new HashMap<String, String>();
-        stackMap.put("push",  
-            ""
+        pushCommands = new HashMap<String, String>();        
+        pushCommands.put("constant", 
+            "// push constant %1$d \n" +
+            "	@%1$d\n" +
+            "	D=A\n" +
+            "	@SP\n" +
+            "	A=M\n" +
+            "	M=D\n" +
+            "	@SP\n" +
+            "	D=M+1\n" +
+            "	@SP\n" +
+            "	M=D\n" 
         );
-        stackMap.put("pop",  
-            ""
+        pushCommands.put("argument", 
+            "// push argument %1$d \n" +
+                "	@%1$d\n" +
+                "	D=A\n" +
+                "	@ARG\n" +
+                "	A=M+D\n" +
+                "	D=M\n" +                
+                "	@SP\n" +
+                "	A=M\n" +
+                "	M=D\n" +                
+                "	@SP\n" +
+                "	D=M+1\n" +
+                "	@SP\n" +
+                "	M=D\n"
         );
-       
+        pushCommands.put("local", 
+            "// push local %1$d \n" +
+                "	@%1$d\n" +
+                "	D=A\n" +
+                "	@LCL\n" +
+                "	A=M+D\n" +
+                "	D=M\n" +                
+                "	@SP\n" +
+                "	A=M\n" +
+                "	M=D\n" +                
+                "	@SP\n" +
+                "	D=M+1\n" +
+                "	@SP\n" +
+                "	M=D\n"
+        );
+        pushCommands.put("this", 
+            "// push this %1$d \n" +
+                "	@%1$d\n" +
+                "	D=A\n" +
+                "	@THIS\n" +
+                "	A=M+D\n" +
+                "	D=M\n" +                
+                "	@SP\n" +
+                "	A=M\n" +
+                "	M=D\n" +                
+                "	@SP\n" +
+                "	D=M+1\n" +
+                "	@SP\n" +
+                "	M=D\n"
+        );
+        pushCommands.put("that", 
+            "// push that %1$d \n" +
+                "	@%1$d\n" +
+                "	D=A\n" +
+                "	@THAT\n" +
+                "	A=M+D\n" +
+                "	D=M\n" +                
+                "	@SP\n" +
+                "	A=M\n" +
+                "	M=D\n" +                
+                "	@SP\n" +
+                "	D=M+1\n" +
+                "	@SP\n" +
+                "	M=D\n"
+        );
+        pushCommands.put("pointer", 
+            "// push pointer %1$d \n" +
+                "	@%1$d\n" +
+                "	D=A\n" +
+                "	@R3\n" +
+                "	A=A+D\n" +
+                "	D=M\n" +                
+                "	@SP\n" +
+                "	A=M\n" +
+                "	M=D\n" +                
+                "	@SP\n" +
+                "	D=M+1\n" +
+                "	@SP\n" +
+                "	M=D\n"
+        );
+        pushCommands.put("temp", 
+            "// push temp %1$d \n" +
+                "	@%1$d\n" +
+                "	D=A\n" +
+                "	@R5\n" +
+                "	A=A+D\n" +
+                "	D=M\n" +                
+                "	@SP\n" +
+                "	A=M\n" +
+                "	M=D\n" +                
+                "	@SP\n" +
+                "	D=M+1\n" +
+                "	@SP\n" +
+                "	M=D\n"
+        );
+        pushCommands.put("static", 
+            "// push static %1$d \n" +
+                "	@%1$d\n" +
+                "	D=A\n" +
+                "	@16\n" +
+                "	A=A+D\n" +
+                "	D=M\n" +                
+                "	@SP\n" +
+                "	A=M\n" +
+                "	M=D\n" +                
+                "	@SP\n" +
+                "	D=M+1\n" +
+                "	@SP\n" +
+                "	M=D\n"
+        );
+        
+        popCommands = new HashMap<String, String>();       
+        popCommands.put("argument", 
+            "// pop argument %1$d \n" +
+                "	@SP\n" +
+                "	D=M-1\n" +
+                "	@SP\n" +
+                "	M=D\n" +
+                "	@%1$d\n" +
+                "	D=A\n" +
+                "	@ARG\n" +
+                "	D=M+D\n" +
+                "	@R13\n" +
+                "	M=D\n" +
+                "	@SP\n" +
+                "	A=M\n" +
+                "	D=M\n" +
+                "	@R13\n" +
+                "	A=M\n" +
+                "	M=D\n"
+        );
+        popCommands.put("local", 
+            "// pop local %1$d \n" +
+                "	@SP\n" +
+                "	D=M-1\n" +
+                "	@SP\n" +
+                "	M=D\n" +
+                "	@%1$d\n" +
+                "	D=A\n" +
+                "	@LCL\n" +
+                "	D=M+D\n" +
+                "	@R13\n" +
+                "	M=D\n" +
+                "	@SP\n" +
+                "	A=M\n" +
+                "	D=M\n" +
+                "	@R13\n" +
+                "	A=M\n" +
+                "	M=D\n"
+        );
+        popCommands.put("this", 
+            "// pop this %1$d \n" +
+                "	@SP\n" +
+                "	D=M-1\n" +
+                "	@SP\n" +
+                "	M=D\n" +
+                "	@%1$d\n" +
+                "	D=A\n" +
+                "	@THIS\n" +
+                "	D=M+D\n" +
+                "	@R13\n" +
+                "	M=D\n" +
+                "	@SP\n" +
+                "	A=M\n" +
+                "	D=M\n" +
+                "	@R13\n" +
+                "	A=M\n" +
+                "	M=D\n"
+        );
+        popCommands.put("that", 
+            "// pop that %1$d \n" +
+                "	@SP\n" +
+                "	D=M-1\n" +
+                "	@SP\n" +
+                "	M=D\n" +
+                "	@%1$d\n" +
+                "	D=A\n" +
+                "	@THAT\n" +
+                "	D=M+D\n" +
+                "	@R13\n" +
+                "	M=D\n" +
+                "	@SP\n" +
+                "	A=M\n" +
+                "	D=M\n" +
+                "	@R13\n" +
+                "	A=M\n" +
+                "	M=D\n"
+        );
+        popCommands.put("pointer", 
+            "// pop pointer %1$d \n" +
+                "	@SP\n" +
+                "	D=M-1\n" +
+                "	@SP\n" +
+                "	M=D\n" +
+                "	@%1$d\n" +
+                "	D=A\n" +
+                "	@R3\n" +
+                "	D=A+D\n" +
+                "	@R13\n" +
+                "	M=D\n" +
+                "	@SP\n" +
+                "	A=M\n" +
+                "	D=M\n" +
+                "	@R13\n" +
+                "	A=M\n" +
+                "	M=D\n"
+        );
+        popCommands.put("temp", 
+            "// pop temp %1$d \n" +
+                "	@SP\n" +
+                "	D=M-1\n" +
+                "	@SP\n" +
+                "	M=D\n" +
+                "	@%1$d\n" +
+                "	D=A\n" +
+                "	@R5\n" +
+                "	D=A+D\n" +
+                "	@R13\n" +
+                "	M=D\n" +
+                "	@SP\n" +
+                "	A=M\n" +
+                "	D=M\n" +
+                "	@R13\n" +
+                "	A=M\n" +
+                "	M=D\n"
+        );
+        popCommands.put("static", 
+            "// pop static %1$d \n" +
+                "	@SP\n" +
+                "	D=M-1\n" +
+                "	@SP\n" +
+                "	M=D\n" +
+                "	@%1$d\n" +
+                "	D=A\n" +
+                "	@16\n" +
+                "	D=A+D\n" +
+                "	@R13\n" +
+                "	M=D\n" +
+                "	@SP\n" +
+                "	A=M\n" +
+                "	D=M\n" +
+                "	@R13\n" +
+                "	A=M\n" +
+                "	M=D\n"
+        );
     }    
 }

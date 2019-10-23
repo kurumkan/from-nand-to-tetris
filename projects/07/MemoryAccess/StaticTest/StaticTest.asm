@@ -28,7 +28,7 @@
 	D=M+1
 	@SP
 	M=D
-// pop 16 8 
+// pop static 8 
 	@SP
 	D=M-1
 	@SP
@@ -45,7 +45,7 @@
 	@R13
 	A=M
 	M=D
-// pop 16 3 
+// pop static 3 
 	@SP
 	D=M-1
 	@SP
@@ -62,7 +62,7 @@
 	@R13
 	A=M
 	M=D
-// pop 16 1 
+// pop static 1 
 	@SP
 	D=M-1
 	@SP
@@ -79,7 +79,7 @@
 	@R13
 	A=M
 	M=D
-// push 16 3 
+// push static 3 
 	@3
 	D=A
 	@16
@@ -92,7 +92,7 @@
 	D=M+1
 	@SP
 	M=D
-// push 16 1 
+// push static 1 
 	@1
 	D=A
 	@16
@@ -116,7 +116,7 @@
 	@SP
 	A=M-1
 	M=M-D
-// push 16 8 
+// push static 8 
 	@8
 	D=A
 	@16

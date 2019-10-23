@@ -4,20 +4,20 @@ import static virtualmachine.CommandTypes.*;
 public class VirtualMachine {
     public static void main(String[] args) {
         try {
-//            Parser parser = new Parser("../07/StackArithmetic/StackTest/StackTest.vm");            
-//            CodeWriter writer = new CodeWriter("../07/StackArithmetic/StackTest/StackTest.asm");
-//            Parser parser = new Parser("../07/StackArithmetic/SimpleAdd/SimpleAdd.vm");            
-//            CodeWriter writer = new CodeWriter("../07/StackArithmetic/SimpleAdd/SimpleAdd.asm");
-
-//            Parser parser = new Parser("../07/MemoryAccess/BasicTest/BasicTest.vm");            
-//            CodeWriter writer = new CodeWriter("../07/MemoryAccess/BasicTest/BasicTest.asm");            
-
-            Parser parser = new Parser("../07/MemoryAccess/PointerTest/PointerTest.vm");            
-            CodeWriter writer = new CodeWriter("../07/MemoryAccess/PointerTest/PointerTest.asm");            
+            String inputFile = args[0].trim();
             
-//            Parser parser = new Parser("../07/MemoryAccess/StaticTest/StaticTest.vm");            
-//            CodeWriter writer = new CodeWriter("../07/MemoryAccess/StaticTest/StaticTest.asm");            
+            if(!inputFile.endsWith(".vm")) {
+                throw new Error("Expected file type: *.vm");
+            }
             
+            String outputFile = inputFile.substring(0, inputFile.length() - 2) + "asm";
+
+            System.out.println("Input file: " + inputFile);
+            System.out.println("Output file: " + outputFile);
+            
+            Parser parser = new Parser(inputFile);            
+            CodeWriter writer = new CodeWriter(outputFile);            
+                    
             while(parser.hasMoreCommands()) {
                 parser.advance();
                 

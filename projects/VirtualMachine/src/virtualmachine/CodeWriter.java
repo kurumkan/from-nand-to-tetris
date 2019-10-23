@@ -18,7 +18,7 @@ public class CodeWriter {
     }
     
     public void writeArithmetic(String command) throws Exception {
-        String result = arithmeticMap.get(command);
+        String result = arithmeticCommands.get(command);
         if(result == null) {
             throw new Exception("Unknown command " + command);
         }        
@@ -27,99 +27,20 @@ public class CodeWriter {
         this.commandCounter++;
     }
     
-    public void writePushPop(String command, String segment, int index) throws Exception {
-        if(command.equals("push") && segment.equals("constant")) {
-            String result = String.format(
-                "// push constant %1$d \n" +
-                "	@%1$d\n" +
-                "	D=A\n" +
-                "	@SP\n" +
-                "	A=M\n" +
-                "	M=D\n" +
-                "	@SP\n" +
-                "	D=M+1\n" +
-                "	@SP\n" +
-                "	M=D\n", index);
-            
-            this.writer.write(result);
-        } else if(command.equals("push") || command.equals("pop")){
-            String segmentAbbreviated = "";
-            
-            switch(segment) {
-                case "argument": {
-                    segmentAbbreviated = "ARG";
-                    break;
-                }
-                case "local": {
-                    segmentAbbreviated = "LCL";
-                    break;
-                }
-                case "this": {
-                    segmentAbbreviated = "THIS";
-                    break;
-                }
-                case "that": {
-                    segmentAbbreviated = "THAT";
-                    break;
-                }
-                case "pointer": {
-                    segmentAbbreviated = "R3";
-                    break;
-                }
-                case "temp": {
-                    segmentAbbreviated = "R5";
-                    break;
-                }
-                case "static": {
-                    segmentAbbreviated = "16";
-                    break;
-                }
-                default: {
-                    throw new Exception("Unknown segment " + segment);
-                }                    
-            }
-                
-            String result = "";
-            String operand = segment.equals("pointer") || segment.equals("temp") || segment.equals("static") ? "A" : "M";
-            if(command.equals("push")) {
-                result = String.format(
-                "// %1$s %2$s %3$d \n" +
-                "	@%3$d\n" +
-                "	D=A\n" +
-                "	@%2$s\n" +
-                "	A=%4$s+D\n" +
-                "	D=M\n" +                
-                "	@SP\n" +
-                "	A=M\n" +
-                "	M=D\n" +                
-                "	@SP\n" +
-                "	D=M+1\n" +
-                "	@SP\n" +
-                "	M=D\n", command, segmentAbbreviated, index, operand);            
-            } else {
-                result = String.format(
-                "// %1$s %2$s %3$d \n" +
-                "	@SP\n" +
-                "	D=M-1\n" +
-                "	@SP\n" +
-                "	M=D\n" +
-                "	@%3$d\n" +
-                "	D=A\n" +
-                "	@%2$s\n" +
-                "	D=%4$s+D\n" +
-                "	@R13\n" +
-                "	M=D\n" +
-                "	@SP\n" +
-                "	A=M\n" +
-                "	D=M\n" +
-                "	@R13\n" +
-                "	A=M\n" +
-                "	M=D\n", command, segmentAbbreviated, index, operand);
-            }
-            
-            this.writer.write(result);
-            System.out.println(command + " " + segmentAbbreviated + " " + index);            
+    public void writePushPop(String command, String segment, int index) throws Exception {        
+        String result = "";
+        String asmTemplate = "";
+        
+        if(command.equals("push")) {
+            asmTemplate = pushCommands.get(segment);            
+        } else if(command.equals("pop")) {
+            asmTemplate = popCommands.get(segment);            
+        } else {
+            throw new Exception("Unknown command: " + command + " " + segment + " " + index);
         }
+        
+        result = String.format(asmTemplate, index);
+        this.writer.write(result);
     }
     
     public void close() throws Exception {

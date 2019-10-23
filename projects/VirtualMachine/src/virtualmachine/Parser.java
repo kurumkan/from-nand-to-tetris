@@ -2,42 +2,16 @@ package virtualmachine;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.HashMap;
-import static virtualmachine.CommandTypes.*;
+import static virtualmachine.CommandTypes.commandTypesMap;
 
 public class Parser {    
     private BufferedReader reader;
     private String nextCommand;
     private String currentCommand;    
-    private String currentCommandArray [];
-    
-    private HashMap<String, String>  commandsMap;
+    private String currentCommandArray [];    
     
     Parser(String filename) throws Exception {
-        this.reader = new BufferedReader(new FileReader(filename)); 
-        this.initCommandsMap();
-    }
-    
-    private void initCommandsMap() {
-        this.commandsMap = new HashMap<String, String>();
-        
-        this.commandsMap.put("add", C_ARITHMETIC);
-        this.commandsMap.put("sub", C_ARITHMETIC);
-        this.commandsMap.put("neg", C_ARITHMETIC);
-        this.commandsMap.put("eq", C_ARITHMETIC);
-        this.commandsMap.put("gt", C_ARITHMETIC);
-        this.commandsMap.put("lt", C_ARITHMETIC);
-        this.commandsMap.put("and", C_ARITHMETIC);
-        this.commandsMap.put("or", C_ARITHMETIC);
-        this.commandsMap.put("not", C_ARITHMETIC);
-        
-        this.commandsMap.put("push", C_PUSH);
-        this.commandsMap.put("pop", C_POP);
-        this.commandsMap.put("label", C_LABEL);
-        this.commandsMap.put("goto", C_GOTO);
-        this.commandsMap.put("if-goto", C_IF);
-        this.commandsMap.put("function", C_FUNCTION);
-        this.commandsMap.put("return", C_RETURN);
-        this.commandsMap.put("call", C_CALL);        
+        this.reader = new BufferedReader(new FileReader(filename));         
     }
     
     public boolean hasMoreCommands() throws Exception {
@@ -65,7 +39,7 @@ public class Parser {
     
     public String commandType() throws Exception {        
         String command = this.currentCommandArray[0];
-        String type = this.commandsMap.get(command);
+        String type = commandTypesMap.get(command);
         
         if(type == null) {
             throw new Exception("Command does not exist: " + this.currentCommand);

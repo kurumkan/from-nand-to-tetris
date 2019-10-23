@@ -8,7 +8,7 @@
 	D=M+1
 	@SP
 	M=D
-// pop R3 0 
+// pop pointer 0 
 	@SP
 	D=M-1
 	@SP
@@ -35,7 +35,7 @@
 	D=M+1
 	@SP
 	M=D
-// pop R3 1 
+// pop pointer 1 
 	@SP
 	D=M-1
 	@SP
@@ -62,7 +62,7 @@
 	D=M+1
 	@SP
 	M=D
-// pop THIS 2 
+// pop this 2 
 	@SP
 	D=M-1
 	@SP
@@ -89,7 +89,7 @@
 	D=M+1
 	@SP
 	M=D
-// pop THAT 6 
+// pop that 6 
 	@SP
 	D=M-1
 	@SP
@@ -106,7 +106,7 @@
 	@R13
 	A=M
 	M=D
-// push R3 0 
+// push pointer 0 
 	@0
 	D=A
 	@R3
@@ -119,7 +119,7 @@
 	D=M+1
 	@SP
 	M=D
-// push R3 1 
+// push pointer 1 
 	@1
 	D=A
 	@R3
@@ -143,7 +143,7 @@
 	@SP
 	A=M-1
 	M=D+M
-// push THIS 2 
+// push this 2 
 	@2
 	D=A
 	@THIS
@@ -167,7 +167,7 @@
 	@SP
 	A=M-1
 	M=M-D
-// push THAT 6 
+// push that 6 
 	@6
 	D=A
 	@THAT
