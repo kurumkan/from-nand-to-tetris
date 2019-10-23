@@ -99,20 +99,19 @@ public class CodeWriter {
                 "	@%3$d\n" +
                 "	D=A\n" +
                 "	@%2$s\n" +
-                "	D=%5$s+D\n" +
-                "	@pop_%4$d\n" +
+                "	D=%4$s+D\n" +
+                "	@R13\n" +
                 "	M=D\n" +
                 "	@SP\n" +
                 "	A=M\n" +
                 "	D=M\n" +
-                "	@pop_%4$d\n" +
+                "	@R13\n" +
                 "	A=M\n" +
-                "	M=D\n", command, segmentAbbreviated, index, this.commandCounter, operand);
+                "	M=D\n", command, segmentAbbreviated, index, operand);
             }
             
             this.writer.write(result);
-            System.out.println(command + " " + segmentAbbreviated + " " + index);
-            this.commandCounter++;
+            System.out.println(command + " " + segmentAbbreviated + " " + index);            
         }
     }
     
