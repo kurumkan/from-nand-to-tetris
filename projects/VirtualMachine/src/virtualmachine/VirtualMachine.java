@@ -9,11 +9,11 @@ public class VirtualMachine {
 //            Parser parser = new Parser("../07/StackArithmetic/SimpleAdd/SimpleAdd.vm");            
 //            CodeWriter writer = new CodeWriter("../07/StackArithmetic/SimpleAdd/SimpleAdd.asm");
 
-            Parser parser = new Parser("../07/MemoryAccess/BasicTest/BasicTest.vm");            
-            CodeWriter writer = new CodeWriter("../07/MemoryAccess/BasicTest/BasicTest.asm");            
-//            
-//            Parser parser = new Parser("../07/MemoryAccess/PointerTest/PointerTest.vm");            
-//            CodeWriter writer = new CodeWriter("../07/MemoryAccess/PointerTest/PointerTest.asm");            
+//            Parser parser = new Parser("../07/MemoryAccess/BasicTest/BasicTest.vm");            
+//            CodeWriter writer = new CodeWriter("../07/MemoryAccess/BasicTest/BasicTest.asm");            
+
+            Parser parser = new Parser("../07/MemoryAccess/PointerTest/PointerTest.vm");            
+            CodeWriter writer = new CodeWriter("../07/MemoryAccess/PointerTest/PointerTest.asm");            
             
 //            Parser parser = new Parser("../07/MemoryAccess/StaticTest/StaticTest.vm");            
 //            CodeWriter writer = new CodeWriter("../07/MemoryAccess/StaticTest/StaticTest.asm");            

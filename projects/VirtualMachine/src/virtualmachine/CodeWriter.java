@@ -62,6 +62,10 @@ public class CodeWriter {
                     segmentAbbreviated = "THAT";
                     break;
                 }
+                case "pointer": {
+                    segmentAbbreviated = "R3";
+                    break;
+                }
                 case "temp": {
                     segmentAbbreviated = "R5";
                     break;
@@ -76,7 +80,7 @@ public class CodeWriter {
             }
                 
             String result = "";
-            String operand = segment.equals("temp") || segment.equals("static") ? "A" : "M";
+            String operand = segment.equals("pointer") || segment.equals("temp") || segment.equals("static") ? "A" : "M";
             if(command.equals("push")) {
                 result = String.format(
                 "// %1$s %2$s %3$d \n" +
