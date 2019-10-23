@@ -66,19 +66,24 @@ public class CodeWriter {
                     segmentAbbreviated = "R5";
                     break;
                 }
+                case "static": {
+                    segmentAbbreviated = "16";
+                    break;
+                }
                 default: {
                     throw new Exception("Unknown segment " + segment);
                 }                    
             }
                 
             String result = "";
+            String operand = segment.equals("temp") || segment.equals("static") ? "A" : "M";
             if(command.equals("push")) {
                 result = String.format(
                 "// %1$s %2$s %3$d \n" +
                 "	@%3$d\n" +
                 "	D=A\n" +
                 "	@%2$s\n" +
-                "	A=M+D\n" +
+                "	A=%4$s+D\n" +
                 "	D=M\n" +                
                 "	@SP\n" +
                 "	A=M\n" +
@@ -86,10 +91,8 @@ public class CodeWriter {
                 "	@SP\n" +
                 "	D=M+1\n" +
                 "	@SP\n" +
-                "	M=D\n", command, segmentAbbreviated, index);            
+                "	M=D\n", command, segmentAbbreviated, index, operand);            
             } else {
-                String operand = segment.equals("temp") ? "A" : "M";
-                
                 result = String.format(
                 "// %1$s %2$s %3$d \n" +
                 "	@SP\n" +

@@ -17,12 +17,12 @@
 	D=A
 	@LCL
 	D=M+D
-	@pop_0
+	@R13
 	M=D
 	@SP
 	A=M
 	D=M
-	@pop_0
+	@R13
 	A=M
 	M=D
 // push constant 21 
@@ -54,12 +54,12 @@
 	D=A
 	@ARG
 	D=M+D
-	@pop_1
+	@R13
 	M=D
 	@SP
 	A=M
 	D=M
-	@pop_1
+	@R13
 	A=M
 	M=D
 // pop ARG 1 
@@ -71,12 +71,12 @@
 	D=A
 	@ARG
 	D=M+D
-	@pop_2
+	@R13
 	M=D
 	@SP
 	A=M
 	D=M
-	@pop_2
+	@R13
 	A=M
 	M=D
 // push constant 36 
@@ -98,12 +98,12 @@
 	D=A
 	@THIS
 	D=M+D
-	@pop_3
+	@R13
 	M=D
 	@SP
 	A=M
 	D=M
-	@pop_3
+	@R13
 	A=M
 	M=D
 // push constant 42 
@@ -135,12 +135,12 @@
 	D=A
 	@THAT
 	D=M+D
-	@pop_4
+	@R13
 	M=D
 	@SP
 	A=M
 	D=M
-	@pop_4
+	@R13
 	A=M
 	M=D
 // pop THAT 2 
@@ -152,12 +152,12 @@
 	D=A
 	@THAT
 	D=M+D
-	@pop_5
+	@R13
 	M=D
 	@SP
 	A=M
 	D=M
-	@pop_5
+	@R13
 	A=M
 	M=D
 // push constant 510 
@@ -179,12 +179,12 @@
 	D=A
 	@R5
 	D=A+D
-	@pop_6
+	@R13
 	M=D
 	@SP
 	A=M
 	D=M
-	@pop_6
+	@R13
 	A=M
 	M=D
 // push LCL 0 
@@ -300,7 +300,7 @@
 	@6
 	D=A
 	@R5
-	A=M+D
+	A=A+D
 	D=M
 	@SP
 	A=M
