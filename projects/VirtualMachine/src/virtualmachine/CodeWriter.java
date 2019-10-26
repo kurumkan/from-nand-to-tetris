@@ -47,12 +47,13 @@ public class CodeWriter {
     }
     
     public void writeLabel(String label) throws Exception {
-        String result = branchingCommands.get("label");
-        
+        String result = branchingCommands.get("label");        
         this.writer.write(String.format(result, label));
     }
     
-    public void writeGoto(String label) {
+    public void writeGoto(String label) throws Exception {
+        String result = branchingCommands.get("goto");
+        this.writer.write(String.format(result, label));
     }
     
     public void writeIf(String label) {

@@ -412,9 +412,15 @@ public class Commands {
         
         // branching commands
         branchingCommands = new HashMap<String, String>();       
+        
         branchingCommands.put("label", 
             "// label %s\n" +
             "(%s)\n"
-        );
+        );        
+        branchingCommands.put("goto", 
+            "// goto %s\n" +
+            "	@%s\n" +
+            "	0;JMP\n"
+        );        
     }    
 }

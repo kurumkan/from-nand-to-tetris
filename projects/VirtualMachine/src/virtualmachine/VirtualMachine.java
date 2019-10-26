@@ -50,6 +50,12 @@ public class VirtualMachine {
                         System.out.println("label");
                         break;
                     }
+                    case C_GOTO: {
+                        String label = parser.arg1();
+                        writer.writeLabel(label);
+                        System.out.println("goto");
+                        break;
+                    }
                     default: {
                         break;
                     }   
