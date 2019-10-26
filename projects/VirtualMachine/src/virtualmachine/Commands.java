@@ -7,7 +7,7 @@ public class Commands {
     public static final HashMap<String, String>  pushCommands;
     public static final HashMap<String, String>  popCommands;
     public static final HashMap<String, String>  branchingCommands;
-//    public static final HashMap<String, String>  functionCommands;
+    public static final HashMap<String, String>  functionCommands;
     
     private Commands() { } 
     
@@ -421,6 +421,21 @@ public class Commands {
             "// goto %s\n" +
             "	@%s\n" +
             "	0;JMP\n"
+        );
+        branchingCommands.put("if-goto", 
+            "// if-goto %s\n" +
+            "	@SP \n" +
+            "	A=M\n" +
+            "	D=M\n" +
+            "	@%s\n" +
+            "	D;JNE\n"
         );        
+        
+        // function commands
+        functionCommands = new HashMap<String, String>();       
+        
+        functionCommands.put("", 
+            ""
+        );
     }    
 }

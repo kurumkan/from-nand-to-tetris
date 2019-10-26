@@ -52,8 +52,14 @@ public class VirtualMachine {
                     }
                     case C_GOTO: {
                         String label = parser.arg1();
-                        writer.writeLabel(label);
+                        writer.writeGoto(label);
                         System.out.println("goto");
+                        break;
+                    }
+                    case C_IF: {
+                        String label = parser.arg1();
+                        writer.writeIf(label);
+                        System.out.println("if-goto");
                         break;
                     }
                     default: {

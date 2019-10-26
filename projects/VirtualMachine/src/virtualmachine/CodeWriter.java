@@ -56,7 +56,9 @@ public class CodeWriter {
         this.writer.write(String.format(result, label));
     }
     
-    public void writeIf(String label) {
+    public void writeIf(String label) throws Exception {
+        String result = branchingCommands.get("if-goto");
+        this.writer.write(String.format(result, label));
     }
     
     public void writeCall(String functionName, int numArgs) {
