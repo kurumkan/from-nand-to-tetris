@@ -6,6 +6,8 @@ public class Commands {
     public static final HashMap<String, String>  arithmeticCommands;
     public static final HashMap<String, String>  pushCommands;
     public static final HashMap<String, String>  popCommands;
+    public static final HashMap<String, String>  branchingCommands;
+//    public static final HashMap<String, String>  functionCommands;
     
     private Commands() { } 
     
@@ -406,6 +408,13 @@ public class Commands {
                 "	@R13\n" +
                 "	A=M\n" +
                 "	M=D\n"
+        );
+        
+        // branching commands
+        branchingCommands = new HashMap<String, String>();       
+        branchingCommands.put("label", 
+            "// label %s\n" +
+            "(%s)\n"
         );
     }    
 }

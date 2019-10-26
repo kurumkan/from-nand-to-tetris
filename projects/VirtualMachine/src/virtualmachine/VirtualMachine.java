@@ -44,6 +44,12 @@ public class VirtualMachine {
                         System.out.println(command);
                         break;
                     }
+                    case C_LABEL: {                        
+                        String label = parser.arg1();                        
+                        writer.writeLabel(label);
+                        System.out.println("label");
+                        break;
+                    }
                     default: {
                         break;
                     }   

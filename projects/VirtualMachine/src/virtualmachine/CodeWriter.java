@@ -43,6 +43,30 @@ public class CodeWriter {
         this.writer.write(result);
     }
     
+    public void writeInit() {
+    }
+    
+    public void writeLabel(String label) throws Exception {
+        String result = branchingCommands.get("label");
+        
+        this.writer.write(String.format(result, label));
+    }
+    
+    public void writeGoto(String label) {
+    }
+    
+    public void writeIf(String label) {
+    }
+    
+    public void writeCall(String functionName, int numArgs) {
+    }
+    
+    public void writeReturn() {
+    }
+    
+    public void writeFunction(String functionName, int numLocals) {
+    }
+    
     public void close() throws Exception {
         this.writer.close();
     }
