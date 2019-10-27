@@ -414,27 +414,37 @@ public class Commands {
         branchingCommands = new HashMap<String, String>();       
         
         branchingCommands.put("label", 
-            "// label %s\n" +
-            "(%s)\n"
+            "// label %1$s\n" +
+            "(%1$s)\n"
         );        
         branchingCommands.put("goto", 
-            "// goto %s\n" +
-            "	@%s\n" +
+            "// goto %1$s\n" +
+            "	@%1$s\n" +
             "	0;JMP\n"
         );
         branchingCommands.put("if-goto", 
-            "// if-goto %s\n" +
+            "// if-goto %1$s" +
+            "   @SP\n" +
+            "	D=M-1\n" +
+            "	@SP\n" +
+            "	M=D\n" +
             "	@SP \n" +
             "	A=M\n" +
             "	D=M\n" +
-            "	@%s\n" +
-            "	D;JNE\n"
+            "	@%1$s\n" +
+            "	D;JNE"
         );        
         
         // function commands
         functionCommands = new HashMap<String, String>();       
         
-        functionCommands.put("", 
+        functionCommands.put("call", 
+            ""
+        );        
+        functionCommands.put("return", 
+            ""
+        );
+        functionCommands.put("function", 
             ""
         );
     }    
