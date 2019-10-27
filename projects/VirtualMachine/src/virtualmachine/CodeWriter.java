@@ -61,13 +61,19 @@ public class CodeWriter {
         this.writer.write(String.format(result, label));
     }
     
-    public void writeCall(String functionName, int numArgs) {
+    public void writeCall(String functionName, int numArgs) throws Exception {
+        String result = functionCommands.get("call");
+        this.writer.write(String.format(result, functionName, numArgs));
     }
     
-    public void writeReturn() {
+    public void writeReturn() throws Exception {
+        String result = functionCommands.get("return");
+        this.writer.write(result);
     }
     
-    public void writeFunction(String functionName, int numLocals) {
+    public void writeFunction(String functionName, int numLocals) throws Exception {
+        String result = functionCommands.get("function");
+        this.writer.write(String.format(result, functionName, numLocals));
     }
     
     public void close() throws Exception {

@@ -62,6 +62,25 @@ public class VirtualMachine {
                         System.out.println("if-goto");
                         break;
                     }
+                    case C_CALL: {
+                        String functionName = parser.arg1();
+                        int nArgs = parser.arg2();
+                        writer.writeCall(functionName, nArgs);
+                        System.out.println("call");
+                        break;
+                    }
+                    case C_RETURN: {                        
+                        writer.writeReturn();
+                        System.out.println("return");
+                        break;
+                    }
+                    case C_FUNCTION: {
+                        String functionName = parser.arg1();
+                        int nLocals = parser.arg2();
+                        writer.writeFunction(functionName, nLocals);
+                        System.out.println("function");
+                        break;
+                    }
                     default: {
                         break;
                     }   
