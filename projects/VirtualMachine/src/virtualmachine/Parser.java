@@ -1,7 +1,7 @@
 package virtualmachine;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
-import java.util.HashMap;
 import static virtualmachine.CommandTypes.commandTypesMap;
 
 public class Parser {    
@@ -10,8 +10,8 @@ public class Parser {
     private String currentCommand;    
     private String currentCommandArray [];    
     
-    Parser(String filename) throws Exception {
-        this.reader = new BufferedReader(new FileReader(filename));         
+    Parser(File file) throws Exception {
+        this.reader = new BufferedReader(new FileReader(file));         
     }
     
     public boolean hasMoreCommands() throws Exception {

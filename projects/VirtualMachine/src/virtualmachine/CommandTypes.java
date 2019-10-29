@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class CommandTypes {
     private CommandTypes() { } 
     
-    public static final HashMap<String, String>  commandTypesMap;
+    public static final HashMap<String, String> commandTypesMap;
     public static final String C_ARITHMETIC = "C_ARITHMETIC";
     public static final String C_PUSH = "C_PUSH";
     public static final String C_POP = "C_POP";
