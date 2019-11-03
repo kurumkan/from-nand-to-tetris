@@ -94,8 +94,8 @@ class PongGame {
 		do Screen.setColor(true);
       	do Screen.drawRectangle(0, bootomLine, 510, bootomLine + 2);
 
-		do moveBoard();
 		do moveBall();
+		do moveBoard();		
 		do score.render();		
 		return;
 	}
