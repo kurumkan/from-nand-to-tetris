@@ -1,28 +1,90 @@
 class PongGame {
-	field Board board; 
-	// field Ball ball; 
-	field String boardDirection;
+	field Board board; 	
+	field String boardDirection;	
+
+	field Ball ball; 	
+	field int ballX, ballY, rad, dx, dy;
+
+	field Score score;	
 	
-	constructor PongGame new() {	
-		let board = Board.new(0, 234, 50);		
+	constructor PongGame new() {							
+		let board = Board.new(0, 220, 50);
 		let boardDirection = 1;
+		
+		let ballX = 55;
+		let ballY = 55;	
+		let rad = 5;
+		let dx = 1;
+		let dy = 1;
+		let ball = Ball.new(50, 50, rad);
+
+		let score = Score.new(0, 22);
+
 		return this;
 	}
 	
 	method void dispose() {
 		do board.dispose();		
+		do ball.dispose();		
+		do score.dispose();		
+
 		do Memory.deAlloc(this);
 		return;
 	}
 	
 	method void moveBoard() {
 		if (boardDirection = 0) { 
-			do board.moveLeft(); 
+			do board.moveLeft(); 			
 		}
 		if (boardDirection = 1) { 
-			do board.moveRight(); 
+			do board.moveRight(); 			
+		}				
+		return;
+	}
+
+	method void moveBall() {	
+		var int boardX, boardY, boardWidth;
+
+		do ball.move(ballX, ballY);
+		
+		if(ballX - rad = 1) {
+			let dx = -dx;
+		} 
+		if(ballX + rad = 510) {
+			let dx = -dx;	
+		}
+		if(ballY - rad = 1) {
+			let dy = -dy;
 		}		
-		do Sys.wait(5);
+		
+		
+		let boardX = board.getX();
+		let boardY = board.getY();
+		let boardWidth = board.getWidth();
+
+		if(
+			((ballY + rad) = (boardY - 1)) &
+			(ballX > boardX) &
+			(ballX < (boardX + boardWidth))
+		) {	
+			do score.inc();		
+			let dy = -dy;			
+		}
+		if(ballY + rad = 254) { 
+			do Output.moveCursor(10, 26);
+			do Output.printString("Game over!");			
+			do Sys.halt();
+		}
+		
+
+		let ballX = ballX + dx;
+		let ballY = ballY + dy;
+		
+		return;
+	}
+
+	method void wait() {
+		do Sys.wait(5);		
 		return;
 	}
 	
@@ -31,12 +93,21 @@ class PongGame {
 		var boolean exit;
 		let exit = false;
 
+		do Screen.setColor(true);
+      	do Screen.drawRectangle(0, 235, 510, 237);
+
 		while (~exit) {			
 			while (key = 0) {
 				let key = Keyboard.keyPressed();
 				do moveBoard();
+				do moveBall();
+				do score.render();
+				do wait();		
 			}			
 			
+			if (key = 81) { // q key  
+				let exit = true; 
+			}     
 			if (key = 130) { 
 				let boardDirection = 0; 
 			}
@@ -47,6 +118,9 @@ class PongGame {
 			while (~(key = 0)) {
 				let key = Keyboard.keyPressed();
 				do moveBoard();
+				do moveBall();					
+				do score.render();
+				do wait();	
 			}
 		}
 

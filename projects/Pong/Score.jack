@@ -5,6 +5,8 @@ class Score {
 		let x = argX;
 		let y = argY;
 		let score = 0;
+
+		do render();
 		return this;
 	}	
 
@@ -13,19 +15,22 @@ class Score {
 		return;
 	}
 
-	method void draw() {
-		do Screen.setColor(true);
-      	//do Screen.drawRectangle(x, y, x + width, y + 3);
-		return;
+	method int getScore() {
+		return score;
 	}
 
-	method void erase() {
-		do Screen.setColor(false);
-		//do Screen.drawRectangle(x, y, x + width, y + 3);
+	method void render() {
+		var String label;
+		let label = "Score: ";
+		do Output.moveCursor(y, x);
+		do Output.printString(label);
+		do Output.printInt(score);
+		do label.dispose();
 		return;
 	}
 
 	method void inc() {		
+		let score = score + 1;
 		return;
 	}
 }

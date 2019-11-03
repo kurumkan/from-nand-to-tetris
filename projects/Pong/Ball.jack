@@ -27,10 +27,12 @@ class Ball {
 	}
 
 	method void move(int argX, int argY) {      
-		do erase();
-		let x = argX;
-		let y = argY;
-		do draw();      
+		if((argX - r > 0) & (argX + r < 511) & (argY - r > 0) & (argY + r < 255)) {
+			do erase();
+			let x = argX;
+			let y = argY;
+			do draw();      			
+		}	
 		return;
 	}
 }

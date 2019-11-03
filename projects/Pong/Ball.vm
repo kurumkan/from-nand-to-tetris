@@ -51,6 +51,32 @@ return
 function Ball.move 0
 push argument 0
 pop pointer 0
+push argument 1
+push this 2
+sub
+push constant 0
+gt
+push argument 1
+push this 2
+add
+push constant 511
+lt
+and
+push argument 2
+push this 2
+sub
+push constant 0
+gt
+and
+push argument 2
+push this 2
+add
+push constant 255
+lt
+and
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
 push pointer 0
 call Ball.erase 1
 pop temp 0
@@ -61,5 +87,6 @@ pop this 1
 push pointer 0
 call Ball.draw 1
 pop temp 0
+label IF_FALSE0
 push constant 0
 return

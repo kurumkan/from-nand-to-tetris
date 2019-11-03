@@ -13,6 +13,21 @@ call Board.draw 1
 pop temp 0
 push pointer 0
 return
+function Board.getX 0
+push argument 0
+pop pointer 0
+push this 0
+return
+function Board.getY 0
+push argument 0
+pop pointer 0
+push this 1
+return
+function Board.getWidth 0
+push argument 0
+pop pointer 0
+push this 2
+return
 function Board.dispose 0
 push argument 0
 pop pointer 0
