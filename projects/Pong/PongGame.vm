@@ -204,7 +204,7 @@ push this 4
 push this 7
 add
 pop this 4
-push constant 7
+push constant 3
 call Sys.wait 1
 pop temp 0
 push constant 0

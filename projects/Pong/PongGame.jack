@@ -85,7 +85,7 @@ class PongGame {
 		let ballX = ballX + dx;
 		let ballY = ballY + dy;
 		
-		do Sys.wait(7);
+		do Sys.wait(3);
 
 		return;
 	}
