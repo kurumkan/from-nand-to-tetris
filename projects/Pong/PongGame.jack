@@ -6,11 +6,14 @@ class PongGame {
 	field int ballX, ballY, rad, dx, dy;
 
 	field Score score;	
+
+	field int bootomLine;
 	
 	constructor PongGame new() {							
+		let bootomLine = 235;
 		let board = Board.new(0, 220, 50);
 		let boardDirection = 1;
-		
+
 		let ballX = 55;
 		let ballY = 55;	
 		let rad = 5;
@@ -39,6 +42,8 @@ class PongGame {
 		if (boardDirection = 1) { 
 			do board.moveRight(); 			
 		}				
+
+		do Sys.wait(1);
 		return;
 	}
 
@@ -70,7 +75,7 @@ class PongGame {
 			do score.inc();		
 			let dy = -dy;			
 		}
-		if(ballY + rad = 254) { 
+		if(ballY + rad = bootomLine) { 
 			do Output.moveCursor(10, 26);
 			do Output.printString("Game over!");			
 			do Sys.halt();
@@ -80,11 +85,18 @@ class PongGame {
 		let ballX = ballX + dx;
 		let ballY = ballY + dy;
 		
+		do Sys.wait(7);
+
 		return;
 	}
 
-	method void wait() {
-		do Sys.wait(5);		
+	method void render() {
+		do Screen.setColor(true);
+      	do Screen.drawRectangle(0, bootomLine, 510, bootomLine + 2);
+
+		do moveBoard();
+		do moveBall();
+		do score.render();		
 		return;
 	}
 	
@@ -93,16 +105,10 @@ class PongGame {
 		var boolean exit;
 		let exit = false;
 
-		do Screen.setColor(true);
-      	do Screen.drawRectangle(0, 235, 510, 237);
-
 		while (~exit) {			
 			while (key = 0) {
 				let key = Keyboard.keyPressed();
-				do moveBoard();
-				do moveBall();
-				do score.render();
-				do wait();		
+				do render();
 			}			
 			
 			if (key = 81) { // q key  
@@ -117,10 +123,7 @@ class PongGame {
 		
 			while (~(key = 0)) {
 				let key = Keyboard.keyPressed();
-				do moveBoard();
-				do moveBall();					
-				do score.render();
-				do wait();	
+				do render();
 			}
 		}
 

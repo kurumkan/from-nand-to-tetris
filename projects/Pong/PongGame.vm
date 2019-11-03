@@ -1,7 +1,9 @@
 function PongGame.new 0
-push constant 9
+push constant 10
 call Memory.alloc 1
 pop pointer 0
+push constant 235
+pop this 9
 push constant 0
 push constant 220
 push constant 50
@@ -70,6 +72,9 @@ push this 0
 call Board.moveRight 1
 pop temp 0
 label IF_FALSE1
+push constant 1
+call Sys.wait 1
+pop temp 0
 push constant 0
 return
 function PongGame.moveBall 3
@@ -155,12 +160,12 @@ label IF_FALSE3
 push this 4
 push this 5
 add
-push constant 254
+push this 9
 eq
 if-goto IF_TRUE4
 goto IF_FALSE4
 label IF_TRUE4
-push constant 11
+push constant 10
 push constant 26
 call Output.moveCursor 2
 pop temp 0
@@ -199,13 +204,34 @@ push this 4
 push this 7
 add
 pop this 4
+push constant 7
+call Sys.wait 1
+pop temp 0
 push constant 0
 return
-function PongGame.wait 0
+function PongGame.render 0
 push argument 0
 pop pointer 0
-push constant 5
-call Sys.wait 1
+push constant 0
+not
+call Screen.setColor 1
+pop temp 0
+push constant 0
+push this 9
+push constant 510
+push this 9
+push constant 2
+add
+call Screen.drawRectangle 4
+pop temp 0
+push pointer 0
+call PongGame.moveBoard 1
+pop temp 0
+push pointer 0
+call PongGame.moveBall 1
+pop temp 0
+push this 8
+call Score.render 1
 pop temp 0
 push constant 0
 return
@@ -214,16 +240,6 @@ push argument 0
 pop pointer 0
 push constant 0
 pop local 1
-push constant 0
-not
-call Screen.setColor 1
-pop temp 0
-push constant 0
-push constant 235
-push constant 510
-push constant 237
-call Screen.drawRectangle 4
-pop temp 0
 label WHILE_EXP0
 push local 1
 not
@@ -238,16 +254,7 @@ if-goto WHILE_END1
 call Keyboard.keyPressed 0
 pop local 0
 push pointer 0
-call PongGame.moveBoard 1
-pop temp 0
-push pointer 0
-call PongGame.moveBall 1
-pop temp 0
-push this 8
-call Score.render 1
-pop temp 0
-push pointer 0
-call PongGame.wait 1
+call PongGame.render 1
 pop temp 0
 goto WHILE_EXP1
 label WHILE_END1
@@ -289,16 +296,7 @@ if-goto WHILE_END2
 call Keyboard.keyPressed 0
 pop local 0
 push pointer 0
-call PongGame.moveBoard 1
-pop temp 0
-push pointer 0
-call PongGame.moveBall 1
-pop temp 0
-push this 8
-call Score.render 1
-pop temp 0
-push pointer 0
-call PongGame.wait 1
+call PongGame.render 1
 pop temp 0
 goto WHILE_EXP2
 label WHILE_END2
