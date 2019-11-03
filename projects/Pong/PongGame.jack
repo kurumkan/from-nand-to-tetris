@@ -1,0 +1,58 @@
+class PongGame {
+	field Board board; 
+	// field Ball ball; 
+	field String boardDirection;
+	
+	constructor PongGame new() {	
+		let board = Board.new(0, 234, 50);		
+		let boardDirection = 1;
+		return this;
+	}
+	
+	method void dispose() {
+		do board.dispose();		
+		do Memory.deAlloc(this);
+		return;
+	}
+	
+	method void moveBoard() {
+		if (boardDirection = 0) { 
+			do board.moveLeft(); 
+		}
+		if (boardDirection = 1) { 
+			do board.moveRight(); 
+		}		
+		do Sys.wait(5);
+		return;
+	}
+	
+	method void run() {
+		var char key; 
+		var boolean exit;
+		let exit = false;
+
+		while (~exit) {			
+			while (key = 0) {
+				let key = Keyboard.keyPressed();
+				do moveBoard();
+			}			
+			
+			if (key = 130) { 
+				let boardDirection = 0; 
+			}
+			if (key = 132) { 
+				let boardDirection = 1; 
+			}
+		
+			while (~(key = 0)) {
+				let key = Keyboard.keyPressed();
+				do moveBoard();
+			}
+		}
+
+		return;
+	}
+}
+
+
+

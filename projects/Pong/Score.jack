@@ -1,0 +1,31 @@
+class Score {
+	field int x, y, score;
+
+	constructor Score new(int argX, int argY) {
+		let x = argX;
+		let y = argY;
+		let score = 0;
+		return this;
+	}	
+
+	method void dispose() {
+		do Memory.deAlloc(this);
+		return;
+	}
+
+	method void draw() {
+		do Screen.setColor(true);
+      	//do Screen.drawRectangle(x, y, x + width, y + 3);
+		return;
+	}
+
+	method void erase() {
+		do Screen.setColor(false);
+		//do Screen.drawRectangle(x, y, x + width, y + 3);
+		return;
+	}
+
+	method void inc() {		
+		return;
+	}
+}

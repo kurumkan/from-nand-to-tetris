@@ -1,0 +1,36 @@
+class Ball {
+	field int x, y, r;
+
+	constructor Ball new(int argX, int argY, int argRad) {
+		let x = argX;
+		let y = argY;
+		let r = argRad;
+		do draw();
+		return this;
+	}	
+
+	method void dispose() {
+		do Memory.deAlloc(this);
+		return;
+	}
+
+	method void draw() {
+		do Screen.setColor(true);
+		do Screen.drawCircle(x, y, r);
+		return;
+	}
+
+	method void erase() {
+		do Screen.setColor(false);
+		do Screen.drawCircle(x, y, r);
+		return;
+	}
+
+	method void move(int argX, int argY) {      
+		do erase();
+		let x = argX;
+		let y = argY;
+		do draw();      
+		return;
+	}
+}
