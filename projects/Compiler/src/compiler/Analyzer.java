@@ -41,7 +41,7 @@ public class Analyzer {
                         }
                         case STRING_CONST: {
                             String token = tokenizer.stringVal();
-                            writer.write(getResultString("stringConstant", token));                            
+                            writer.write(getResultString("stringConstant", token.substring(1, token.length() - 1)));                            
                             break;
                         }
                         case IDENTIFIER: {

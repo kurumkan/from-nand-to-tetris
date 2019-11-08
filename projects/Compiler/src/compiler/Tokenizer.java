@@ -47,15 +47,8 @@ public class Tokenizer {
             }
             
             String nextChunk = line;                       
-            while (nextChunk.length() > 0){                
-                String first = nextChunk.substring(0);
-                if(symbols.get(first) != null) {
-                    currentTokenArray.add(first);
-                    nextChunk = nextChunk.substring(1);
-                    continue;
-                }
-                
-                String patternStr = "[A-Za-z0-9_]{1,}";
+            while (nextChunk.length() > 0){                                
+                String patternStr = "\"([^\"]*)\"{1,}|[A-Za-z0-9_]{1,}|[^A-Za-z0-9_\\s]{1}";
                 Pattern pattern = Pattern.compile(patternStr);
                 Matcher matcher = pattern.matcher(nextChunk);
                 
@@ -69,6 +62,10 @@ public class Tokenizer {
                 
                 nextChunk = nextChunk.substring(matcher.end());
             }
+        }
+        
+        if(currentTokenArray.size() == 0) {
+            return false;
         }
         
         this.nextToken = this.currentTokenArray.remove(0);
