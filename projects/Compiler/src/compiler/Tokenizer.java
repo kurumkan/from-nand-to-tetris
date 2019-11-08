@@ -9,6 +9,8 @@ import static compiler.KeyWords.keyWords;
 import static compiler.Symbols.symbols;
 import static compiler.TokenTypes.*;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Tokenizer {
     // Removes all space characters from input stream
@@ -38,9 +40,35 @@ public class Tokenizer {
                 if (!line.isEmpty()) {                    
                     break;
                 }            
-            }        
-            // TODO: fix splitting regex    
-            this.currentTokenArray.addAll(Arrays.asList(line.split("\\s+")));     
+            }                    
+            
+            if(line == null) {
+                return false;
+            }
+            
+            String nextChunk = line;                       
+            while (nextChunk.length() > 0){                
+                String first = nextChunk.substring(0);
+                if(symbols.get(first) != null) {
+                    currentTokenArray.add(first);
+                    nextChunk = nextChunk.substring(1);
+                    continue;
+                }
+                
+                String patternStr = "[A-Za-z0-9_]{1,}";
+                Pattern pattern = Pattern.compile(patternStr);
+                Matcher matcher = pattern.matcher(nextChunk);
+                
+                if(!matcher.find()){
+                    nextChunk = "";
+                    continue;
+                }
+
+                String token = nextChunk.substring(matcher.start(), matcher.end());
+                currentTokenArray.add(token);
+                
+                nextChunk = nextChunk.substring(matcher.end());
+            }
         }
         
         this.nextToken = this.currentTokenArray.remove(0);
