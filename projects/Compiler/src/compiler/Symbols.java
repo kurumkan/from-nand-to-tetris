@@ -18,10 +18,10 @@ public class Symbols {
     public static final String MINUS = "-";
     public static final String MULT = "*";
     public static final String DIV = "/";
-    public static final String AMP = "&";
+    public static final String AMP = "&amp;";
     public static final String OR = "|";
-    public static final String LT = "<";
-    public static final String GT = ">";
+    public static final String LT = "&lt;";
+    public static final String GT = "&gt;";
     public static final String EQ = "=";
     public static final String NOT = "~";    
     

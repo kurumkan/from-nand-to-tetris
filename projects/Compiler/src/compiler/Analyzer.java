@@ -1,4 +1,5 @@
 package compiler;
+import static compiler.Symbols.symbols;
 import static compiler.TokenTypes.*;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,8 +30,8 @@ public class Analyzer {
                             break;
                         }
                         case SYMBOL: {
-                            char token = tokenizer.symbol();
-                            writer.write(getResultString("symbol", token + ""));                            
+                            String token = symbols.get(tokenizer.symbol() + "");                            
+                            writer.write(getResultString("symbol", token));                            
                             break;
                         }
                         case INT_CONST: {
