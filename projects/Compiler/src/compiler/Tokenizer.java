@@ -30,10 +30,12 @@ public class Tokenizer {
             String line = "";
             
             boolean mutlilineCommentOpened = false;
-            while ((line = reader.readLine()) != null) {                
+            while ((line = reader.readLine()) != null) {   
+                line = line.trim();
                 if(line.isEmpty()) {
                     continue;
                 }
+                System.out.println(line);
                 
                 if(mutlilineCommentOpened) {
                     int multiLineCommentEnd = line.indexOf("*/");
@@ -103,7 +105,7 @@ public class Tokenizer {
         }
         
         this.nextToken = this.currentTokenArray.remove(0);
-        System.out.println(this.nextToken);
+        System.out.println("TOKEN" +this.nextToken);
         
         return this.nextToken != null;
     }
