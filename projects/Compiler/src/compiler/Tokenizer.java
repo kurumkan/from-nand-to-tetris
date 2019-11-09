@@ -30,19 +30,53 @@ public class Tokenizer {
             String line = "";
             
             boolean mutlilineCommentOpened = false;
-            while ((line = reader.readLine()) != null) {
-                int commentStart = line.indexOf("//");            
-                line = line.substring(0, commentStart < 0 ? line.length() : commentStart).trim();
+            while ((line = reader.readLine()) != null) {                
+                if(line.isEmpty()) {
+                    continue;
+                }
                 
-                commentStart = line.indexOf("/*");            
-                line = line.substring(0, commentStart < 0 ? line.length() : commentStart).trim();
+                if(mutlilineCommentOpened) {
+                    int multiLineCommentEnd = line.indexOf("*/");
+                    if(multiLineCommentEnd < 0) {
+                        continue;
+                    }
+                    mutlilineCommentOpened = false;
+                    line = line.substring(multiLineCommentEnd + 2).trim();
+                }
+                
+                int singleCommentStart = line.indexOf("//");            
+                int multilineCommentStart = line.indexOf("/*");      
+                
+                if(singleCommentStart > -1 && multilineCommentStart > -1) {
+                    if(singleCommentStart < multilineCommentStart) {
+                        line = line.substring(0, singleCommentStart).trim();
+                    } else {
+                        int multiLineCommentEnd = line.indexOf("*/");
+                        if(multiLineCommentEnd < 0) {
+                            line = line.substring(0, multilineCommentStart).trim();
+                            mutlilineCommentOpened = true;
+                        } else {
+                            line = line.substring(0, multilineCommentStart).trim() + line.substring(multiLineCommentEnd + 2).trim();                        
+                        }
+                    }
+                } else if(singleCommentStart > -1 && multilineCommentStart < 0) {
+                    line = line.substring(0, singleCommentStart).trim();                    
+                } else if(singleCommentStart < 0 && multilineCommentStart > -1) {
+                    int multiLineCommentEnd = line.indexOf("*/");
+                    if(multiLineCommentEnd < 0) {
+                        line = line.substring(0, multilineCommentStart).trim();
+                        mutlilineCommentOpened = true;
+                    } else {
+                        line = line.substring(0, multilineCommentStart).trim() + line.substring(multiLineCommentEnd + 2).trim();                        
+                    }
+                }
                                 
                 if (!line.isEmpty()) {                    
                     break;
-                }            
+                } 
             }                    
             
-            if(line == null) {
+            if(line == null) {                
                 return false;
             }
             
@@ -64,8 +98,8 @@ public class Tokenizer {
             }
         }
         
-        if(currentTokenArray.size() == 0) {
-            return false;
+        if(currentTokenArray.isEmpty()) {            
+            return true;
         }
         
         this.nextToken = this.currentTokenArray.remove(0);

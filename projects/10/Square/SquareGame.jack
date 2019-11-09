@@ -52,7 +52,7 @@ class SquareGame {
       var char key;  // the key currently pressed by the user
       var boolean exit;
       let exit = false;
-      
+            
       while (~exit) {
          // waits for a key to be pressed
          while (key = 0) {

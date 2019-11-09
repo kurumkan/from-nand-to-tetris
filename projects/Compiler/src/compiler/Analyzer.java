@@ -21,7 +21,6 @@ public class Analyzer {
                 writer.write("<tokens>");
                 while(tokenizer.hasMoreTokens()) {                                        
                     tokenizer.advance();
-//                    System.out.println(tokenizer.tokenType());
                     
                     switch(tokenizer.tokenType()) {
                         case KEYWORD: {
