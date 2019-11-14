@@ -55,7 +55,6 @@ public class Tokenizer {
         }
         
         this.nextToken = this.currentTokenArray.remove(0);
-//        System.out.println("TOKEN " +this.nextToken);
         
         return this.nextToken != null;
     }
@@ -104,8 +103,7 @@ public class Tokenizer {
             line = line.trim();
             if(line.isEmpty()) {
                 continue;
-            }
-            System.out.println(line);
+            }            
 
             if(mutlilineCommentOpened) {
                 int multiLineCommentEnd = line.indexOf("*/");

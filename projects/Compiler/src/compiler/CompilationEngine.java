@@ -1,4 +1,5 @@
 package compiler;
+import static compiler.Symbols.symbols;
 import static compiler.TokenTypes.*;
 import java.io.BufferedWriter;
 
@@ -379,7 +380,7 @@ public class CompilationEngine {
         while(tokenizer.tokenType().equals(SYMBOL) && !current().equals(";") && !current().equals(")") && !current().equals("]") && !current().equals(",")) {
             String operation = current();
             eat("+", "-", "*", "/", "&", "|", "<", ">", "=");
-            write("symbol", operation);   
+            write("symbol", symbols.get(operation));   
             
             compileTerm();         
         }                        
@@ -398,7 +399,7 @@ public class CompilationEngine {
             }
             case STRING_CONST: {                
                 eat(token);
-                write("stringConstant", token);
+                write("stringConstant", token.substring(1, token.length() - 1));
                 break;
             }
             case KEYWORD: {                                
@@ -554,12 +555,12 @@ public class CompilationEngine {
         }
     }
     private void writeStart(String tag) throws Exception {
-        writer.write(String.format("<%s>", tag));
+        writer.write(String.format("<%s>\n", tag));
     }
     private void writeEnd(String tag) throws Exception {
-        writer.write(String.format("</%s>", tag));
+        writer.write(String.format("</%s>\n", tag));
     }
     private void write(String tag, String token) throws Exception {
-        writer.write(String.format("<%1$s> %2$s </%1$s>", tag, token));
+        writer.write(String.format("<%1$s>\n%2$s\n</%1$s>", tag, token));
     }        
 }

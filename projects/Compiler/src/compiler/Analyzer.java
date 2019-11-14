@@ -1,6 +1,4 @@
 package compiler;
-import static compiler.Symbols.symbols;
-import static compiler.TokenTypes.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -12,74 +10,35 @@ public class Analyzer {
             File src = new File(inputPath);
             CompilationEngine engine;  
             Tokenizer tokenizer;
-            
+            BufferedWriter writer;
+                    
             if(src.isDirectory()) {
-                // handle directory input
+                if(!new File(inputPath, "Main.jack").exists()) {
+                    throw new Exception("Folder must contain Main.jack file");
+                }
+                
+                String outputPath = (inputPath.endsWith("/") ? inputPath : inputPath + "/")  + src.getName() + ".xml";
+
+                writer = new BufferedWriter(new FileWriter(outputPath));                
+                File[] files = src.listFiles((d, fileName) -> fileName.endsWith(".jack"));
+                        
+                for(int i = 0; i < files.length; i += 1) {
+                    File file = files[i];                    
+                    parser = new Parser(file);
+                    writer.setFileName(file.getName());
+                    processCommands(parser, writer);
+                }
             } else {
                 String outputPath = inputPath.substring(0, inputPath.length() - 5) + ".xml";
                 tokenizer = new Tokenizer(src);                
-                BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath));    
+                writer = new BufferedWriter(new FileWriter(outputPath));    
                 
                 engine = new CompilationEngine(tokenizer, writer);                
                 engine.compileClass();
-                
-//                while(tokenizer.hasMoreTokens()) {                                        
-//                    tokenizer.advance();
-//                    
-//                    switch(tokenizer.tokenType()) {
-//                        case KEYWORD: {
-//                            String token = tokenizer.keyWord();
-//                            writer.write(getResultString("keyword", token));                            
-//                            break;
-//                        }
-//                        case SYMBOL: {
-//                            String token = symbols.get(tokenizer.symbol() + "");                            
-//                            writer.write(getResultString("symbol", token));                            
-//                            break;
-//                        }
-//                        case INT_CONST: {
-//                            int token = tokenizer.intVal();
-//                            writer.write(getResultString("integerConstant", token + ""));                            
-//                            break;
-//                        }
-//                        case STRING_CONST: {
-//                            String token = tokenizer.stringVal();
-//                            writer.write(getResultString("stringConstant", token.substring(1, token.length() - 1)));                            
-//                            break;
-//                        }
-//                        case IDENTIFIER: {
-//                            String token = tokenizer.identifier();
-//                            writer.write(getResultString("identifier", token));                            
-//                            break;
-//                        }                        
-//                        default: {
-//                            break;
-//                        }   
-//                    }
-//                }                               
-                
-                writer.close();
             }           
-            
-            
-            
-//            String inputPath = args[0].trim();
-//            File src = new File(inputPath);
-//            CompilationEngine engine;  
-//            Tokenizer tokenizer;
-//            
-//            if(src.isDirectory()) {
-//                // handle directory input
-//            } else {
-//                String outputPath = inputPath.substring(0, inputPath.length() - 4) + ".xml";
-//                tokenizer = new Tokenizer(src);
-//                engine = new CompilationEngine(tokenizer, new File(outputPath));
-//            }       
+            writer.close();
         } catch(Exception e) {
             e.printStackTrace();
         }
     }    
-    private static String getResultString(String tag, String token) {
-        return String.format("<%1$s> %2$s </%1$s>", tag, token);
-    }
 }
