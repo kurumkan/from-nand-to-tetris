@@ -4,7 +4,8 @@ import java.util.HashMap;
 public class KeyWords {
     private KeyWords() { } 
     
-    public static final HashMap<String, String> keyWords;
+    public static final HashMap<String, String> keyWords;    
+    
     public static final String CLASS = "CLASS";
     public static final String METHOD = "METHOD";
     public static final String FUNCTION = "FUNCTION";
@@ -50,6 +51,6 @@ public class KeyWords {
         keyWords.put("true", TRUE);
         keyWords.put("false", FALSE);
         keyWords.put("null", NULL);
-        keyWords.put("this", THIS);
+        keyWords.put("this", THIS);        
     }    
 }

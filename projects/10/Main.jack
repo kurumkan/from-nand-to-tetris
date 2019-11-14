@@ -1,0 +1,17 @@
+class Main {    
+    method int func() {
+    	do s(a + b);
+    	do Square.m(2 * 3 + (5 - 6));
+    }    
+}
+
+
+
+// do
+
+
+
+// return
+// let
+// while 
+// if 

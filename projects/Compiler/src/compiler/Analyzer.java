@@ -16,45 +16,48 @@ public class Analyzer {
             if(src.isDirectory()) {
                 // handle directory input
             } else {
-                String outputPath = inputPath.substring(0, inputPath.length() - 5) + "T.xml";
-                tokenizer = new Tokenizer(src);
+                String outputPath = inputPath.substring(0, inputPath.length() - 5) + ".xml";
+                tokenizer = new Tokenizer(src);                
                 BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath));    
-                writer.write("<tokens>");
-                while(tokenizer.hasMoreTokens()) {                                        
-                    tokenizer.advance();
-                    
-                    switch(tokenizer.tokenType()) {
-                        case KEYWORD: {
-                            String token = tokenizer.keyWord();
-                            writer.write(getResultString("keyword", token));                            
-                            break;
-                        }
-                        case SYMBOL: {
-                            String token = symbols.get(tokenizer.symbol() + "");                            
-                            writer.write(getResultString("symbol", token));                            
-                            break;
-                        }
-                        case INT_CONST: {
-                            int token = tokenizer.intVal();
-                            writer.write(getResultString("integerConstant", token + ""));                            
-                            break;
-                        }
-                        case STRING_CONST: {
-                            String token = tokenizer.stringVal();
-                            writer.write(getResultString("stringConstant", token.substring(1, token.length() - 1)));                            
-                            break;
-                        }
-                        case IDENTIFIER: {
-                            String token = tokenizer.identifier();
-                            writer.write(getResultString("identifier", token));                            
-                            break;
-                        }                        
-                        default: {
-                            break;
-                        }   
-                    }
-                }
-                writer.write("</tokens>");
+                
+                engine = new CompilationEngine(tokenizer, writer);                
+                engine.compileClass();
+                
+//                while(tokenizer.hasMoreTokens()) {                                        
+//                    tokenizer.advance();
+//                    
+//                    switch(tokenizer.tokenType()) {
+//                        case KEYWORD: {
+//                            String token = tokenizer.keyWord();
+//                            writer.write(getResultString("keyword", token));                            
+//                            break;
+//                        }
+//                        case SYMBOL: {
+//                            String token = symbols.get(tokenizer.symbol() + "");                            
+//                            writer.write(getResultString("symbol", token));                            
+//                            break;
+//                        }
+//                        case INT_CONST: {
+//                            int token = tokenizer.intVal();
+//                            writer.write(getResultString("integerConstant", token + ""));                            
+//                            break;
+//                        }
+//                        case STRING_CONST: {
+//                            String token = tokenizer.stringVal();
+//                            writer.write(getResultString("stringConstant", token.substring(1, token.length() - 1)));                            
+//                            break;
+//                        }
+//                        case IDENTIFIER: {
+//                            String token = tokenizer.identifier();
+//                            writer.write(getResultString("identifier", token));                            
+//                            break;
+//                        }                        
+//                        default: {
+//                            break;
+//                        }   
+//                    }
+//                }                               
+                
                 writer.close();
             }           
             

@@ -2,7 +2,6 @@ package compiler;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.Arrays;
 import java.util.List;
 
 import static compiler.KeyWords.keyWords;
@@ -24,71 +23,22 @@ public class Tokenizer {
     public Tokenizer(File inputFile) throws Exception {
         this.reader = new BufferedReader(new FileReader(inputFile));  
         currentTokenArray = new LinkedList<String>();
-    }
+    }        
     public boolean hasMoreTokens() throws Exception {        
         if(this.currentTokenArray.isEmpty()) {            
-            String line = "";
-            
-            boolean mutlilineCommentOpened = false;
-            while ((line = reader.readLine()) != null) {   
-                line = line.trim();
-                if(line.isEmpty()) {
-                    continue;
-                }
-                System.out.println(line);
-                
-                if(mutlilineCommentOpened) {
-                    int multiLineCommentEnd = line.indexOf("*/");
-                    if(multiLineCommentEnd < 0) {
-                        continue;
-                    }
-                    mutlilineCommentOpened = false;
-                    line = line.substring(multiLineCommentEnd + 2).trim();
-                }
-                
-                int singleCommentStart = line.indexOf("//");            
-                int multilineCommentStart = line.indexOf("/*");      
-                
-                if(singleCommentStart > -1 && multilineCommentStart > -1) {
-                    if(singleCommentStart < multilineCommentStart) {
-                        line = line.substring(0, singleCommentStart).trim();
-                    } else {
-                        int multiLineCommentEnd = line.indexOf("*/");
-                        if(multiLineCommentEnd < 0) {
-                            line = line.substring(0, multilineCommentStart).trim();
-                            mutlilineCommentOpened = true;
-                        } else {
-                            line = line.substring(0, multilineCommentStart).trim() + line.substring(multiLineCommentEnd + 2).trim();                        
-                        }
-                    }
-                } else if(singleCommentStart > -1 && multilineCommentStart < 0) {
-                    line = line.substring(0, singleCommentStart).trim();                    
-                } else if(singleCommentStart < 0 && multilineCommentStart > -1) {
-                    int multiLineCommentEnd = line.indexOf("*/");
-                    if(multiLineCommentEnd < 0) {
-                        line = line.substring(0, multilineCommentStart).trim();
-                        mutlilineCommentOpened = true;
-                    } else {
-                        line = line.substring(0, multilineCommentStart).trim() + line.substring(multiLineCommentEnd + 2).trim();                        
-                    }
-                }
-                                
-                if (!line.isEmpty()) {                    
-                    break;
-                } 
-            }                    
+            String line = readFile();    
             
             if(line == null) {                
                 return false;
             }
             
             String nextChunk = line;                       
-            while (nextChunk.length() > 0){                                
+            while(nextChunk.length() > 0) {                                
                 String patternStr = "\"([^\"]*)\"{1,}|[A-Za-z0-9_]{1,}|[^A-Za-z0-9_\\s]{1}";
                 Pattern pattern = Pattern.compile(patternStr);
                 Matcher matcher = pattern.matcher(nextChunk);
                 
-                if(!matcher.find()){
+                if(!matcher.find()) {
                     nextChunk = "";
                     continue;
                 }
@@ -105,7 +55,7 @@ public class Tokenizer {
         }
         
         this.nextToken = this.currentTokenArray.remove(0);
-        System.out.println("TOKEN" +this.nextToken);
+//        System.out.println("TOKEN " +this.nextToken);
         
         return this.nextToken != null;
     }
@@ -145,5 +95,58 @@ public class Tokenizer {
     }
     public String identifier() {
         return this.currentToken;
+    }
+    private String readFile() throws Exception {
+        String line = "";
+            
+        boolean mutlilineCommentOpened = false;
+        while ((line = reader.readLine()) != null) {   
+            line = line.trim();
+            if(line.isEmpty()) {
+                continue;
+            }
+            System.out.println(line);
+
+            if(mutlilineCommentOpened) {
+                int multiLineCommentEnd = line.indexOf("*/");
+                if(multiLineCommentEnd < 0) {
+                    continue;
+                }
+                mutlilineCommentOpened = false;
+                line = line.substring(multiLineCommentEnd + 2).trim();
+            }
+
+            int singleCommentStart = line.indexOf("//");            
+            int multilineCommentStart = line.indexOf("/*");      
+
+            if(singleCommentStart > -1 && multilineCommentStart > -1) {
+                if(singleCommentStart < multilineCommentStart) {
+                    line = line.substring(0, singleCommentStart).trim();
+                } else {
+                    int multiLineCommentEnd = line.indexOf("*/");
+                    if(multiLineCommentEnd < 0) {
+                        line = line.substring(0, multilineCommentStart).trim();
+                        mutlilineCommentOpened = true;
+                    } else {
+                        line = line.substring(0, multilineCommentStart).trim() + line.substring(multiLineCommentEnd + 2).trim();                        
+                    }
+                }
+            } else if(singleCommentStart > -1 && multilineCommentStart < 0) {
+                line = line.substring(0, singleCommentStart).trim();                    
+            } else if(singleCommentStart < 0 && multilineCommentStart > -1) {
+                int multiLineCommentEnd = line.indexOf("*/");
+                if(multiLineCommentEnd < 0) {
+                    line = line.substring(0, multilineCommentStart).trim();
+                    mutlilineCommentOpened = true;
+                } else {
+                    line = line.substring(0, multilineCommentStart).trim() + line.substring(multiLineCommentEnd + 2).trim();                        
+                }
+            }
+
+            if (!line.isEmpty()) {                    
+                break;
+            } 
+        }
+        return line;
     }    
 }
