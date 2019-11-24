@@ -1,5 +1,4 @@
 package compiler;
-import static compiler.Symbols.symbols;
 import static compiler.TokenTypes.*;
 import java.io.BufferedWriter;
 
@@ -7,25 +6,26 @@ public class CompilationEngine {
     // Gets input from tokenizer
     // Write parsed structure to the output stream
     private Tokenizer tokenizer;
-    private BufferedWriter writer;    
+    private VmWriter vmWriter;
+    private SymbolTable symbolTable;
+    private BufferedWriter writer;
+    private String className;    
+    private int labelId;
     
-    public CompilationEngine(Tokenizer tokenizer, BufferedWriter writer) throws Exception {
+    public CompilationEngine(Tokenizer tokenizer, BufferedWriter writer, VmWriter vmWriter) throws Exception {
         this.tokenizer = tokenizer;
         this.writer = writer;
+        this.vmWriter = vmWriter;
     }
     public void compileClass() throws Exception {
-        writeStart("class");        
-        
+        symbolTable = new SymbolTable();        
         advance();        
         eat("class");
-        write("keyword", "class");
         
-        String className = current();
-        eat(className);
-        write("identifier", className);
+        className = current();
+        eat(className);        
         
         eat("{");
-        write("symbol", "{");
         
         while(tokenizer.tokenType().equals(KEYWORD)) {
             String first = current();
@@ -39,167 +39,169 @@ public class CompilationEngine {
         }        
 
         eat("}");
-        write("symbol", current());
-        
-        writeEnd("class");
     }   
     
-    public void compileClassVarDec() throws Exception {                
-        writeStart("classVarDec");
-        
+    public void compileClassVarDec() throws Exception {
         String specifier = current();
         eat("static", "field");
-        write("keyword", specifier);                    
         
         String type = current();
-        if(tokenizer.tokenType().equals(IDENTIFIER)) {            
-            eat(type);            
-            write("identifier", type);                        
+        if(tokenizer.tokenType().equals(IDENTIFIER)) {
+            eat(type);
         } else {
             eat("int", "char", "boolean");
-            write("keyword", type);            
-        }        
+        }
         
         boolean iterate = true;
         do {
             if(tokenizer.tokenType().equals(IDENTIFIER)) {
                 String varName = current();            
-                eat(varName);            
-                write("identifier", varName);
+                // todo rewrite
+                String kind = specifier.equals("static") ? "STATIC" : "FIELD";
+                symbolTable.define(varName, type, kind);                
+                eat(varName);                            
             } 
-
+            
             String delim = current();
             eat(",", ";");
-            write("symbol", delim);  
+            
             if(delim.equals(";")) {
                 iterate = false;
             }            
         } while(iterate);
-
-        writeEnd("classVarDec");
     }
     public void compileSubroutine() throws Exception {
-        writeStart("subroutineDec");
-        
+        symbolTable.startSubroutine();        
+        String name;        
+                
         String subroutineType = current();
+        boolean isFunction = subroutineType.equals("function");
         eat("constructor", "function", "method");
-        write("keyword", subroutineType);                    
                 
         String returnType = current();                
         if(tokenizer.tokenType().equals(IDENTIFIER)) {
-            eat(returnType);
-            write("identifier", returnType);                                            
+            eat(returnType);            
         } else {
-            eat("void", "int", "char", "boolean");
-            write("keyword", returnType);                    
+            eat("void", "int", "char", "boolean");            
         }         
         
         if(tokenizer.tokenType().equals(IDENTIFIER)) {
-            String subroutineName = current();
-            eat(subroutineName);
-            write("identifier", subroutineName); 
+            name = current();
+            eat(name);                        
         } else {
             throw new Exception("Expected to find subroutine name");
         }
         
+        String fullSubroutineName = className + "." + name;  
+        
         eat("(");
-        write("symbol", "(");
+        
+        if(subroutineType.equals("method")) {
+            symbolTable.define("this", returnType, "ARG");
+        }
+        
+        if(subroutineType.equals("constructor")) {
+            symbolTable.define("this", returnType, "pointer");
+        }
         
         compileParameterList();
                 
-        eat(")");
-        write("symbol", ")");                       
+        eat(")");       
         
-        writeStart("subroutineBody");
         
         eat("{");
-        write("symbol", "{");
-          
-        while(current().equals("var")) {
-            compileVarDec();                                   
+        
+        
+        while(current().equals("var")) {            
+            compileVarDec();                                               
         }        
         
-        compileStatements();                
+        int nLocals = symbolTable.varCount("VAR");        
         
-        eat("}");
-        write("symbol", "}");                
+        if(symbolTable.indexOf(fullSubroutineName) > -1) {
+            throw new Exception("Function '" + name + "' has already been declared.");            
+        }
         
-        writeEnd("subroutineBody");
+        vmWriter.writeFunction(fullSubroutineName, nLocals);        
+        if(subroutineType.equals("constructor")) {            
+            int nClassVars = symbolTable.varCount("FIELD");  
+            
+            vmWriter.writePush("constant", nClassVars);
+            vmWriter.writeCall("Memory.alloc", 1);
+            vmWriter.writePop("pointer", 0);            
+        }
         
-        writeEnd("subroutineDec");
+        if(subroutineType.equals("method")) {            
+            vmWriter.writePush("ARG", 0);            
+            vmWriter.writePop("pointer", 0);            
+        }
+        
+        compileStatements();                      
+     
+        eat("}");        
     }
     public void compileParameterList() throws Exception {
-        writeStart("parameterList");        
-        
         while(true) {
             String type = current();                
             if(tokenizer.tokenType().equals(IDENTIFIER)) {
-                eat(type);
-                write("identifier", type);                                            
+                eat(type);                                                          
             } else if(tokenizer.tokenType().equals(KEYWORD)) {
-                eat("int", "char", "boolean");
-                write("keyword", type);                    
+                eat("int", "char", "boolean");                                 
             } else {
                 break;
             }
-            
+            String paramName;
             if(tokenizer.tokenType().equals(IDENTIFIER)) {
-                String paramName = current();            
-                eat(paramName);
-                write("identifier", paramName);            
+                paramName = current();            
+                eat(paramName);                
             } else {
                 throw new Exception("Expected to find parameter name");
             }
+            
+            symbolTable.define(paramName, type, "ARG");
+            
             
             String symbol = current();            
             if(symbol.equals(")")) {
                 break;
             }
-            eat(",");                         
-            write("symbol", symbol);            
-        }
-        
-        writeEnd("parameterList");
+            eat(",");                                     
+        }                             
     }
-    public void compileVarDec() throws Exception { 
-        writeStart("varDec");
-        
-        eat("var");                         
-        write("keyword", "var");    
+    public void compileVarDec() throws Exception {           
+        eat("var");                                   
         
         String type = current();                
         if(tokenizer.tokenType().equals(IDENTIFIER)) {
-            eat(type);
-            write("identifier", type);                                            
+            eat(type);                                                     
         } else if(tokenizer.tokenType().equals(KEYWORD)) {
-            eat("int", "char", "boolean");
-            write("keyword", type);                    
+            eat("int", "char", "boolean");            
         }
         
         while(true) {                        
             if(tokenizer.tokenType().equals(IDENTIFIER)) {
                 String varName = current();                        
-                eat(varName);                         
-                write("identifier", varName);            
+                eat(varName);      
+                if(symbolTable.indexOf(varName) > -1) {
+                    throw new Exception("Variable '" + varName + "' already declared");
+                }
+                
+                symbolTable.define(varName, type, "VAR");                
             } else {
                 throw new Exception("Expected to find class variable name");
             }
             
             String symbol = current();                        
             eat(",", ";");                         
-            write("symbol", symbol);  
+            
             if(symbol.equals(";")) {
                 break;
             }
-        }        
-        
-        writeEnd("varDec");
+        }               
     }
     public void compileStatements() throws Exception {
-        writeStart("statements");
-        
         while(tokenizer.tokenType().equals(KEYWORD)) {
-            String first = tokenizer.keyWord();         
+            String first = tokenizer.keyWord();                     
             if(first.equals("let")) {
                 compileLet();
             } else if(first.equals("if")) {
@@ -214,14 +216,13 @@ public class CompilationEngine {
                 throw new Exception("Unexpected token");
             }            
         }
-        
-        writeEnd("statements");
-    }
-    public void compileDo() throws Exception {
-        writeStart("doStatement");
-        
+    }    
+    
+    public void compileDo() throws Exception {        
         eat("do");
-        write("keyword", "do");       
+        
+        String name = "";
+        int nArgs = 0;
         
         if(!tokenizer.tokenType().equals(IDENTIFIER)) {
             throw new Exception("Expected to find identifier, but found " + current());
@@ -229,264 +230,371 @@ public class CompilationEngine {
         
         String token = current();
         eat(token);
-        write("identifier", token); 
-        
+        name = "";
+                        
         String dotOrBracket = current();
-        eat(".", "(");
-        write("symbol", dotOrBracket);
+        eat(".", "(");        
         
-        if(dotOrBracket.equals("(")) {
-            compileExpressionList();
+        if(dotOrBracket.equals("(")) {            
+            vmWriter.writePush("pointer", 0);
+            nArgs = compileExpressionList() + 1;
             
-            eat(")");
-            write("symbol", ")");
+            name = className + "." + token;
+            
+            eat(")");            
         } else {
             if(!tokenizer.tokenType().equals(IDENTIFIER)) {
                 throw new Exception("Expected to find identifier, but found " + current());
             }
             String subroutineName = current();
-            eat(subroutineName);
-            write("identifier", subroutineName);
-            
-            eat("(");
-            write("symbol", "(");
-            
-            compileExpressionList();
-            
-            eat(")");
-            write("symbol", ")");
-        }
+            eat(subroutineName);                        
+
+            int index = symbolTable.indexOf(token);
+
+            if(index > -1) {
+                String segment = symbolTable.kindOf(token);
+                String type = symbolTable.typeOf(token);
+                vmWriter.writePush(segment, index);
+                nArgs = 1;
+                name = type;                            
+            } else {
+                name = token;
+            }
+
+            eat("(");            
+
+            nArgs += compileExpressionList();
+
+            name += "." + subroutineName;            
+
+            eat(")");        
+        }        
         
-        eat(";");
-        write("symbol", ";");
-                
-        writeEnd("doStatement");
+        vmWriter.writeCall(name, nArgs);           
+        
+        vmWriter.writePop("temp", 0);
+        
+        eat(";");                
     }
-    public void compileLet() throws Exception {
-        writeStart("letStatement");
+    public void compileLet() throws Exception {        
+        eat("let");   
         
-        eat("let");
-        write("keyword", "let");            
-        
-        if(tokenizer.tokenType().equals(IDENTIFIER)) {
-            String varName = current();            
-            eat(varName);
-            write("identifier", varName);
-        } else {
+        if(!tokenizer.tokenType().equals(IDENTIFIER)) { 
             throw new Exception("Expected to find variable name");
         }
         
-        if(current().equals("[")) {            
-            eat("[");
-            write("symbol", "[");            
-            
+        String varName = current();            
+        eat(varName);            
+
+        if(symbolTable.indexOf(varName) < 0) {
+            throw new Exception("Unknown variable: '" + varName + "'");
+        }            
+        
+        boolean isArray = current().equals("[");
+        
+        if(isArray) {  
+            // Array
+            eat("[");            
             compileExpression();
+            eat("]");            
+            String segment = symbolTable.kindOf(varName);
+            int index = symbolTable.indexOf(varName);   
+            vmWriter.writePush(segment, index);
+            vmWriter.writeArithmetic("add");
+        } else {
             
-            eat("]");
-            write("symbol", "]");            
-        }        
+        }
        
-        eat("=");
-        write("symbol", "=");                            
-        
-        compileExpression();
-        
+        eat("=");                
+        compileExpression();        
         eat(";");
-        write("symbol", ";");
-            
-        writeEnd("letStatement");        
+
+        if(isArray) {
+            vmWriter.writePop("temp", 0);
+            vmWriter.writePop("pointer", 1);
+            vmWriter.writePush("temp", 0);
+            vmWriter.writePop("that", 0);
+        } else {
+            String segment = symbolTable.kindOf(varName);
+            int index = symbolTable.indexOf(varName);   
+            vmWriter.writePop(segment, index);
+        }        
     }
     public void compileWhile() throws Exception {
-        writeStart("whileStatement");
-        
-        eat("while");
-        write("keyword", "while");            
-        
-        eat("(");
-        write("symbol", "(");            
-        
-        compileExpression();
+        String beginLabel = getLabel("WHILE_BEGIN");        
+        String endLabel = getLabel("WHILE_END");
                 
-        eat(")");
-        write("symbol", ")");            
-        
-        eat("{");
-        write("symbol", "{");
-        
+        eat("while");        
+        eat("(");
+        vmWriter.writeLabel(beginLabel);        
+        compileExpression();         
+        vmWriter.writeArithmetic("not");
+        vmWriter.writeIf(endLabel);        
+        eat(")");        
+        eat("{");        
         compileStatements();
-        
+        vmWriter.writeGoto(beginLabel);        
         eat("}");
-        write("symbol", "}");
         
-        writeEnd("whileStatement");    
+        vmWriter.writeLabel(endLabel);        
     }
     public void compileReturn() throws Exception {
-        writeStart("returnStatement");
-        
         eat("return");
-        write("keyword", "return");                            
         
-        if(!current().equals(";")) {
-            compileExpression();
+        boolean isVoid = true;
+        if(!current().equals(";")) {            
+            compileExpression();            
+            isVoid = false;
         }         
-        
         eat(";");
-        write("symbol", ";");        
-                
-        writeEnd("returnStatement");
-    }
-    public void compileIf() throws Exception {
-        writeStart("ifStatement");
         
-        eat("if");
-        write("keyword", "if");            
-        
-        eat("(");
-        write("symbol", "(");            
-        
-        compileExpression();
-                
-        eat(")");
-        write("symbol", ")");            
-        
-        eat("{");
-        write("symbol", "{");
-        
-        compileStatements();
-        
-        eat("}");
-        write("symbol", "}");
-
-        if(current().equals("else")) {
-            eat("else");
-            write("keyword", "else");            
-            
-            eat("{");
-            write("symbol", "{");
-
-            compileStatements();
-
-            eat("}");
-            write("symbol", "}");
+        if(isVoid) {                        
+            vmWriter.writePush("constant", 0);
         }
         
-        writeEnd("ifStatement");        
+//        if(symbolTable.indexOf("this") > -1) {            
+//            vmWriter.writePush("pointer", 0);
+//        }        
+        vmWriter.writeReturn();
+    }
+    public void compileIf() throws Exception {                
+        String endLabel = getLabel("IF_END");
+        String elseLabel = getLabel("ELSE_BEGIN");        
+        
+        eat("if");                
+        eat("(");                        
+        compileExpression();                    
+        vmWriter.writeArithmetic("not");
+        vmWriter.writeIf(elseLabel);        
+        eat(")");
+                
+        eat("{");
+        compileStatements();        
+        eat("}");        
+        vmWriter.writeGoto(endLabel);        
+        
+        if(current().equals("else")) {
+            vmWriter.writeLabel(elseLabel);            
+            eat("else");                        
+            eat("{");
+            compileStatements();            
+            eat("}");            
+        } else {
+            vmWriter.writeLabel(elseLabel);            
+            vmWriter.writeGoto(endLabel);        
+        }
+        vmWriter.writeLabel(endLabel);
     }
     public void compileExpression() throws Exception {
-        writeStart("expression");
-        
         compileTerm();
                 
         while(tokenizer.tokenType().equals(SYMBOL) && !current().equals(";") && !current().equals(")") && !current().equals("]") && !current().equals(",")) {
             String operation = current();
-            eat("+", "-", "*", "/", "&", "|", "<", ">", "=");
-            write("symbol", symbols.get(operation));   
+            eat("+", "-", "*", "/", "&", "|", "<", ">", "=");            
+            String command = "";
+            // todo: move logic to writearithmetic
+            switch(operation) {
+                case "+": {
+                    command = "add";
+                    break;
+                }
+                case "-": {
+                    command = "sub";                    
+                    break;
+                }
+                case "*": {
+                    command = "call Math.multiply 2";                    
+                    break;
+                }
+                case "/": {
+                    command = "call Math.divide 2";                    
+                    break;
+                }
+                case "&": {
+                    command = "and";                    
+                    break;
+                }
+                case "|": {
+                    command = "or";                    
+                    break;
+                }
+                case "<": {
+                    command = "lt";                    
+                    break;
+                }
+                case ">": {
+                    command = "gt";                    
+                    break;
+                }
+                case "=": {
+                    command = "eq";                                        
+                    break;
+                }
+                default: {                    
+                    break;
+                }
+            }
             
             compileTerm();         
-        }                        
-        
-        writeEnd("expression");
+            
+            vmWriter.writeArithmetic(command);
+        }                                
     }
     public void compileTerm() throws Exception {
-        writeStart("term");
-        
         String token = current();
         switch(tokenizer.tokenType()) {
             case INT_CONST: {                
-                eat(token);
-                write("integerConstant", token);
+                eat(token);                
+                vmWriter.writePush("constant", Integer.parseInt(token));
                 break;
             }
             case STRING_CONST: {                
                 eat(token);
-                write("stringConstant", token.substring(1, token.length() - 1));
+                String string = token.substring(1, token.length() - 1);
+                int len = string.length();
+                vmWriter.writePush("constant", len);
+                vmWriter.writeCall("String.new", 1);
+                for(int i = 0; i < len; i += 1) {
+                    vmWriter.writePush("constant", string.charAt(i));
+                    vmWriter.writeCall("String.appendChar", 2);
+                }                
                 break;
             }
             case KEYWORD: {                                
                 eat("true", "false", "null", "this");
-                write("keyword", token);
+                if(token.equals("true")) {
+                    vmWriter.writePush("constant", 1);
+                    vmWriter.writeArithmetic("neg");
+                }
+                if(token.equals("false") || token.equals("null")) {
+                    vmWriter.writePush("constant", 0);                    
+                }
+                if(token.equals("this")) {      
+                    if(symbolTable.indexOf(token) < 0) {
+                        throw new Exception("Undeclared variable: " + token);
+                    }
+
+                    vmWriter.writePush("pointer", 0);                    
+                }    
+                
                 break;
             }
             case SYMBOL: {
                 if(token.equals("(")) {
-                    eat("(");
-                    write("symbol", "(");
+                    eat("(");                    
 
                     compileExpression();
 
-                    eat(")");
-                    write("symbol", ")");
-                } else {                    
-                    eat("-", "~");
-                    write("symbol", token);
+                    eat(")");                    
+                } else {
+                    // unary operator
+                    String command = "";
+                    if(token.equals("-")) {
+                        command = "neg";
+                    } else {
+                        command = "not";
+                    }
+                    eat("-", "~");                    
 
                     compileTerm();
+                    vmWriter.writeArithmetic(command);                    
                 }                
                 break;
             }
-            case IDENTIFIER: {
-                eat(token);
-                write("identifier", token);
+            case IDENTIFIER: {                
+                eat(token);                
                 
-                String nextToken = current();
+                String nextToken = current();                
                 if(nextToken.equals("[")) {
-                    eat("[");
-                    write("symbol", "[");
+                    // Array
+                    if(symbolTable.indexOf(token) < 0) {
+                        throw new Exception("Undeclared variable: " + token);
+                    }                    
+
+                    eat("[");                    
                     
                     compileExpression();
                     
-                    eat("]");
-                    write("symbol", "]");
-                } else if(nextToken.equals("(")) {
-                    eat("(");
-                    write("symbol", "(");
+                    eat("]");                    
                     
-                    compileExpressionList();
+                    String segment = symbolTable.kindOf(token);
+                    int index = symbolTable.indexOf(token);                    
                     
-                    eat(")");
-                    write("symbol", ")");
-                } else if(nextToken.equals(".")) {
-                    eat(".");
-                    write("symbol", ".");
-                    
-                    if(!tokenizer.tokenType().equals(IDENTIFIER)) {
-                        throw new Exception("Expected to find subroutine name");
+                    vmWriter.writePush(segment, index);                    
+                    vmWriter.writeArithmetic("add");                    
+                    vmWriter.writePop("pointer", 1);                                        
+                    vmWriter.writePush("that", 0);     
+                } else if(nextToken.equals("(") || nextToken.equals(".")) {       
+                    int nArgs = 0;
+                    String name = "";                    
+                        
+                    String dotOrBracket = current();
+                    eat(".", "(");        
+
+                    if(dotOrBracket.equals("(")) {
+                        name = token;
+                        nArgs = compileExpressionList();
+                        eat(")");            
+                    } else {
+                        // TODO there is duplicate in compiledo
+                        if(!tokenizer.tokenType().equals(IDENTIFIER)) {
+                            throw new Exception("Expected to find identifier, but found " + current());
+                        }
+                        String subroutineName = current();
+                        eat(subroutineName);                        
+                        
+                        int index = symbolTable.indexOf(token);
+                        
+                        if(index > -1) {
+                            String segment = symbolTable.kindOf(token);
+                            String type = symbolTable.typeOf(token);
+                            vmWriter.writePush(segment, index);
+                            nArgs = 1;
+                            name = type;                            
+                        } else {
+                            name = token;
+                        }
+                        
+                        eat("(");            
+
+                        nArgs += compileExpressionList();
+                        
+                        name += "." + subroutineName;            
+
+                        eat(")");            
                     }
-                    String subroutineName = current();
-                    eat(subroutineName);
-                    write("identifier", subroutineName);
-                    
-                    eat("(");
-                    write("symbol", "(");
-                    
-                    compileExpressionList();
-                    
-                    eat(")");
-                    write("symbol", ")");
-                } 
-                
+
+                    vmWriter.writeCall(name, nArgs);   
+                } else {
+                    // single identifier
+                    if(symbolTable.indexOf(token) < 0) {
+                        throw new Exception("Undeclared variable: " + token);
+                    }
+
+                    String segment = symbolTable.kindOf(token);
+                    int index = symbolTable.indexOf(token);
+
+                    vmWriter.writePush(segment, index);
+                }
                 break;
             }
             default: {
                 break;
             }
         }
-        
-        writeEnd("term");
     }
-    public void compileExpressionList() throws Exception {
-        writeStart("expressionList");
-        
+    public int compileExpressionList() throws Exception {
+        int numberOfExpressions = 0;
         while(isNextExpression()) {
             compileExpression();
+            numberOfExpressions += 1;
             
             if(current().equals(",")) {
-                eat(",");
-                write("symbol", ",");
+                eat(",");                
             }
         }
         
-        writeEnd("expressionList");
+        return numberOfExpressions;
     }
     private boolean isNextExpression() throws Exception {
         String term = current();
@@ -553,14 +661,23 @@ public class CompilationEngine {
         if(tokenizer.hasMoreTokens()) {
             tokenizer.advance();
         }
+    }            
+    private String getLabel(String labelType) throws Exception {                
+        String result = "";
+        // todo replace string literals with constants
+        switch(labelType) {
+            case "WHILE_BEGIN":             
+            case "WHILE_END":             
+            case "IF_END":
+            case "ELSE_BEGIN": {
+                result = labelType;
+                break;
+            }
+            default: {
+                throw new Exception("Unknown label type: " + labelType);
+            }
+        }
+        
+        return result + this.labelId++;
     }
-    private void writeStart(String tag) throws Exception {
-        writer.write(String.format("<%s>\n", tag));
-    }
-    private void writeEnd(String tag) throws Exception {
-        writer.write(String.format("</%s>\n", tag));
-    }
-    private void write(String tag, String token) throws Exception {
-        writer.write(String.format("<%1$s>\n%2$s\n</%1$s>", tag, token));
-    }        
 }

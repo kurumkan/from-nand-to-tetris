@@ -8,8 +8,7 @@ public class SymbolTable {
     private HashMap<String, SymbolTableElement> subroutineScope;
     
     public SymbolTable() {
-        classScope = new HashMap<String, SymbolTableElement>();
-        subroutineScope = new HashMap<String, SymbolTableElement>();
+        classScope = new HashMap<String, SymbolTableElement>();        
     }
     public void startSubroutine() {
         subroutineScope = new HashMap<String, SymbolTableElement>();
@@ -23,10 +22,11 @@ public class SymbolTable {
                 break;
             }             
             case "ARG":
-            case "VAR": {
+            case "VAR": 
+            case "pointer": {
                 scope = subroutineScope;
                 break;
-            }            
+            }                        
             default: {
                 throw new Exception("Unknown kind: " + kind);
             }
@@ -43,7 +43,8 @@ public class SymbolTable {
                 break;
             }
             case "ARG":
-            case "VAR": {
+            case "VAR":
+            case "pointer": {
                 scope = subroutineScope;
                 break;
             }            
@@ -99,5 +100,15 @@ public class SymbolTable {
         }
         
         return el.getIndex();
+    }
+    public String toString() {
+        String result = "";
+        for (Entry<String, SymbolTableElement> current : classScope.entrySet()) {
+            result += current.getKey() + ", " + current.toString() + "\n";
+        }
+        for (Entry<String, SymbolTableElement> current : subroutineScope.entrySet()) {
+            result += current.getKey() + ", " + current.toString() + "\n";
+        }
+        return result;
     }
 }

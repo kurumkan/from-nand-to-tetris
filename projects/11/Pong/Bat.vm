@@ -28,8 +28,8 @@ return
 function Bat.show 0
 push argument 0
 pop pointer 0
-push constant 0
-not
+push constant 1
+neg
 call Screen.setColor 1
 pop temp 0
 push pointer 0
@@ -101,9 +101,8 @@ pop pointer 0
 push this 4
 push constant 1
 eq
-if-goto IF_TRUE0
-goto IF_FALSE0
-label IF_TRUE0
+not
+if-goto ELSE_BEGIN1
 push this 0
 push constant 4
 sub
@@ -111,12 +110,14 @@ pop this 0
 push this 0
 push constant 0
 lt
-if-goto IF_TRUE1
-goto IF_FALSE1
-label IF_TRUE1
+not
+if-goto ELSE_BEGIN3
 push constant 0
 pop this 0
-label IF_FALSE1
+goto IF_END2
+label ELSE_BEGIN3
+goto IF_END2
+label IF_END2
 push constant 0
 call Screen.setColor 1
 pop temp 0
@@ -136,8 +137,8 @@ push this 3
 add
 call Screen.drawRectangle 4
 pop temp 0
-push constant 0
-not
+push constant 1
+neg
 call Screen.setColor 1
 pop temp 0
 push this 0
@@ -151,7 +152,7 @@ add
 call Screen.drawRectangle 4
 pop temp 0
 goto IF_END0
-label IF_FALSE0
+label ELSE_BEGIN1
 push this 0
 push constant 4
 add
@@ -161,14 +162,16 @@ push this 2
 add
 push constant 511
 gt
-if-goto IF_TRUE2
-goto IF_FALSE2
-label IF_TRUE2
+not
+if-goto ELSE_BEGIN5
 push constant 511
 push this 2
 sub
 pop this 0
-label IF_FALSE2
+goto IF_END4
+label ELSE_BEGIN5
+goto IF_END4
+label IF_END4
 push constant 0
 call Screen.setColor 1
 pop temp 0
@@ -184,8 +187,8 @@ push this 3
 add
 call Screen.drawRectangle 4
 pop temp 0
-push constant 0
-not
+push constant 1
+neg
 call Screen.setColor 1
 pop temp 0
 push this 0

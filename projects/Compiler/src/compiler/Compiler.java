@@ -3,7 +3,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 
-public class Analyzer {
+public class Compiler {
     public static void main(String[] args) {
         try {
             String inputPath = args[0].trim();
@@ -17,6 +17,7 @@ public class Analyzer {
                 }
                 
                 BufferedWriter writer;
+                VmWriter vmWriter;
                 
                 File[] files = src.listFiles((d, fileName) -> fileName.endsWith(".jack"));
                         
@@ -24,19 +25,23 @@ public class Analyzer {
                     File file = files[i];                    
                     tokenizer = new Tokenizer(file);         
                     String filePath = file.getAbsolutePath();
-                    String outputPath = filePath.substring(0, filePath.length() - 5) + ".xml";;
-                    writer = new BufferedWriter(new FileWriter(outputPath));                      
-                    engine = new CompilationEngine(tokenizer, writer);                
+                    String outputPath = filePath.substring(0, filePath.length() - 5) + ".vm";;
+                    writer = new BufferedWriter(new FileWriter(outputPath));
+                    vmWriter = new VmWriter(writer);
+                    engine = new CompilationEngine(tokenizer, writer, vmWriter);                
                     engine.compileClass();                    
                     writer.close();
+                    vmWriter.close();
                 }
             } else {
-                String outputPath = inputPath.substring(0, inputPath.length() - 5) + ".xml";
+                String outputPath = inputPath.substring(0, inputPath.length() - 5) + ".vm";
                 tokenizer = new Tokenizer(src);                
                 BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath)); 
-                engine = new CompilationEngine(tokenizer, writer);                
+                VmWriter vmWriter = new VmWriter(writer);
+                engine = new CompilationEngine(tokenizer, writer, vmWriter);                
                 engine.compileClass();                
                 writer.close();
+                vmWriter.close();
             }                       
         } catch(Exception e) {
             e.printStackTrace();
