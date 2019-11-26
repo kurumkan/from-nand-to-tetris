@@ -55,8 +55,7 @@ public class CompilationEngine {
         boolean iterate = true;
         do {
             if(tokenizer.tokenType().equals(IDENTIFIER)) {
-                String varName = current();            
-                // todo rewrite
+                String varName = current();                            
                 String kind = specifier.equals("static") ? "STATIC" : "FIELD";
                 symbolTable.define(varName, type, kind);                
                 eat(varName);                            
@@ -351,10 +350,7 @@ public class CompilationEngine {
         if(isVoid) {                        
             vmWriter.writePush("constant", 0);
         }
-        
-//        if(symbolTable.indexOf("this") > -1) {            
-//            vmWriter.writePush("pointer", 0);
-//        }        
+
         vmWriter.writeReturn();
     }
     public void compileIf() throws Exception {                
@@ -391,53 +387,9 @@ public class CompilationEngine {
         while(tokenizer.tokenType().equals(SYMBOL) && !current().equals(";") && !current().equals(")") && !current().equals("]") && !current().equals(",")) {
             String operation = current();
             eat("+", "-", "*", "/", "&", "|", "<", ">", "=");            
-            String command = "";
-            // todo: move logic to writearithmetic
-            switch(operation) {
-                case "+": {
-                    command = "add";
-                    break;
-                }
-                case "-": {
-                    command = "sub";                    
-                    break;
-                }
-                case "*": {
-                    command = "call Math.multiply 2";                    
-                    break;
-                }
-                case "/": {
-                    command = "call Math.divide 2";                    
-                    break;
-                }
-                case "&": {
-                    command = "and";                    
-                    break;
-                }
-                case "|": {
-                    command = "or";                    
-                    break;
-                }
-                case "<": {
-                    command = "lt";                    
-                    break;
-                }
-                case ">": {
-                    command = "gt";                    
-                    break;
-                }
-                case "=": {
-                    command = "eq";                                        
-                    break;
-                }
-                default: {                    
-                    break;
-                }
-            }
             
-            compileTerm();         
-            
-            vmWriter.writeArithmetic(command);
+            compileTerm();                     
+            vmWriter.writeArithmetic(operation);
         }                                
     }
     public void compileTerm() throws Exception {
@@ -488,16 +440,12 @@ public class CompilationEngine {
                     eat(")");                    
                 } else {
                     // unary operator
-                    String command = "";
-                    if(token.equals("-")) {
-                        command = "neg";
-                    } else {
-                        command = "not";
-                    }
+                    String operation = token;
+                    
                     eat("-", "~");                    
 
                     compileTerm();
-                    vmWriter.writeArithmetic(command);                    
+                    vmWriter.writeUnary(operation);
                 }                
                 break;
             }
@@ -663,8 +611,7 @@ public class CompilationEngine {
         }
     }            
     private String getLabel(String labelType) throws Exception {                
-        String result = "";
-        // todo replace string literals with constants
+        String result = "";        
         switch(labelType) {
             case "WHILE_BEGIN":             
             case "WHILE_END":             

@@ -76,7 +76,75 @@ public class VmWriter {
         String command = String.format("pop %s %d", segment, index);
         write(command);
     }
-    public void writeArithmetic(String command) throws Exception {
+    public void writeArithmetic(String operation) throws Exception {
+        String command = "";
+        // todo: move logic to writearithmetic
+        switch(operation) {            
+            case "+": {
+                command = "add";
+                break;
+            }
+            case "-": {
+                command = "sub";                    
+                break;
+            }
+            case "*": {
+                command = "call Math.multiply 2";                    
+                break;
+            }
+            case "/": {
+                command = "call Math.divide 2";                    
+                break;
+            }
+            case "&": {
+                command = "and";                    
+                break;
+            }
+            case "|": {
+                command = "or";                    
+                break;
+            }
+            case "<": {
+                command = "lt";                    
+                break;
+            }
+            case ">": {
+                command = "gt";                    
+                break;
+            }
+            case "=": {
+                command = "eq";                                        
+                break;
+            }            
+            case "add":
+            case "not":
+            case "neg": {
+                command = operation;
+                break;
+            }
+            default: {                    
+                throw new Exception("Illegal operation " + operation);
+            }
+        }                        
+
+        write(command);
+    }
+    public void writeUnary(String operation) throws Exception {
+        String command = "";
+        switch(operation) {
+            case "-": {
+                command = "neg";
+                break;
+            }
+            case "~": {
+                command = "not";                    
+                break;
+            }
+            default: {
+                throw new Exception("Illegal operation " + operation);
+            }
+        }
+        
         write(command);
     }
     public void writeLabel(String label) throws Exception {

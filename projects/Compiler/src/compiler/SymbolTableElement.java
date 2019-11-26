@@ -22,6 +22,7 @@ public class SymbolTableElement {
     public int getIndex() {
         return index;
     }
+    @Override
     public String toString() {
         return kind + ", " +  type + ", " + index;
     }
