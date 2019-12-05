@@ -1,8 +1,3 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-// File name: projects/12/Math.jack
-
 /**
  * A library of commonly used mathematical functions.
  * Note: Jack compilers implement multiplication and division using OS method calls.
@@ -11,10 +6,15 @@ class Math {
 
     /** Initializes the library. */
     function void init() {
+        return;
     }
 
     /** Returns the absolute value of x. */
     function int abs(int x) {
+        if(x < 0) {
+            return -x;
+        }
+        return x;
     }
 
     /** Returns the product of x and y. 
@@ -23,6 +23,19 @@ class Math {
      *  the Jack expressions x*y and multiply(x,y) return the same value.
      */
     function int multiply(int x, int y) {
+        var int sum, shiftedX, i;        
+        let shiftedX = x;
+        let i = 1;
+
+        while(y > i) {
+            if(~(y & i = 0)) {
+                let sum = sum + shiftedX;        
+            }
+            let shiftedX = shiftedX + shiftedX;
+            let i = i + i;
+        }
+
+        return 300;
     }
 
     /** Returns the integer part of x/y.
@@ -31,17 +44,63 @@ class Math {
      *  the Jack expressions x/y and divide(x,y) return the same value.
      */
     function int divide(int x, int y) {
+        var int q;
+        if(y < x) {
+            return 0;
+        }
+        
+        let q = divide(x, multiply(y, 2));
+
+        if((x - multiply(multiply(q, y), 2)) < y) {
+            return multiply(q, 2);
+        } else {
+            return multiply(q, 2) + 1;
+        }                
     }
 
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
+        var int result, i, j;
+        let i = divide(x, 2) - 1;
+
+        while(i > 0) {
+            let j = result + 2;
+
+            if((j * j < x) | (j * j = x)) {
+                result = j;
+            }
+        }
+
+        return result;
+    }
+
+    function int pow(int base, int exp) {
+        var int result;
+        let result = 1;
+
+        while(exp > 0) {
+            let result = Math.multiply(result, base);
+            let exp = exp - 1;
+        }
+
+        return result;
     }
 
     /** Returns the greater number. */
     function int max(int a, int b) {
+        if(a > b) {
+            return a;
+        }
+
+        return b;
     }
 
     /** Returns the smaller number. */
     function int min(int a, int b) {
+        if(a < b) {
+            return a;
+        }
+
+        return b;    
     }
 }

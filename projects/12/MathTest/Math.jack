@@ -1,0 +1,149 @@
+/**
+ * A library of commonly used mathematical functions.
+ * Note: Jack compilers implement multiplication and division using OS method calls.
+ */
+class Math {
+
+    /** Initializes the library. */
+    function void init() {
+        return;
+    }
+
+    /** Returns the absolute value of x. */
+    function int abs(int x) {
+        if(x < 0) {
+            return -x;
+        }
+        return x;
+    }
+
+    /** Returns the product of x and y. 
+     *  When a Jack compiler detects the multiplication operator '*' in the 
+     *  program's code, it handles it by invoking this method. In other words,
+     *  the Jack expressions x*y and multiply(x,y) return the same value.
+     */
+    function int multiply(int x, int y) {
+        var int sum, shiftedX, i, absX, absY;
+        let absX = Math.abs(x);
+        let absY = Math.abs(y);
+        let shiftedX = absX;
+        let i = 1;        
+
+        while((i < 16385) & (i > 0)) {                              
+            if(~((absY & i) = 0)) {
+                let sum = sum + shiftedX;        
+            }
+            let shiftedX = shiftedX + shiftedX;
+            let i = i + i;                    
+        }
+
+        if(((x < 0) & (y > 0)) | ((x > 0) & (y < 0)))  {
+            return -sum;
+        }
+
+        return sum; 
+    }
+
+    /** Returns the integer part of x/y.
+     *  When a Jack compiler detects the multiplication operator '/' in the 
+     *  program's code, it handles it by invoking this method. In other words,
+     *  the Jack expressions x/y and divide(x,y) return the same value.
+     */
+    function int divide(int x, int y) {
+        var int q, absX, absY, result, temp;        
+        var boolean isNeg;
+
+        let isNeg = ((x < 0) & (y > 0)) | ((x > 0) & (y < 0));
+
+        let absX = Math.abs(x);
+        let absY = Math.abs(y);
+
+        if(absY > absX) {
+            return 0;
+        }
+        
+        if(absY > 16383) {                        
+            if(isNeg) {
+                return -1;     
+            }
+            return 1;
+        }
+
+        let q = Math.divide(absX, absY + absY);        
+        let result = q + q;
+        let temp = absX - Math.multiply(result, absY);
+
+        if((temp > absY) | (temp = absY)) {
+            let result = result + 1;
+        }
+
+        if(isNeg) {
+            return -result;            
+        }
+
+        return result;
+    }
+
+
+    /** Returns the integer part of the square root of x. */
+    function int sqrt(int x) {   
+        var int result, temp;
+        let result = x;
+
+        let temp = 0;
+        
+        while(result > temp) {                        
+            let result = Math.rightShift(result + temp);
+            let temp = Math.divide(x, result);
+        }        
+
+        return result;
+    }
+
+    function int rightShift(int n) {
+        var int result, power, shifted;
+        let power = 1;
+        
+        while((power < n) & (power < 16384)) {
+            let shifted = power;
+            let power = power + power;
+
+            if(n & power > 0) {
+                let result = result + shifted ;        
+            }            
+        }
+
+        return result;
+    }
+
+    /** Returns power of x to exponent exp */
+    function int pow(int base, int exp) {
+        var int result;
+        let result = 1;
+
+        while(exp > 0) {
+            let result = Math.multiply(result, base);
+            let exp = exp - 1;
+        }
+
+        return result;
+    }
+
+    /** Returns the greater number. */
+    function int max(int a, int b) {
+        if(a > b) {
+            return a;
+        }
+
+        return b;
+    }
+
+    /** Returns the smaller number. */
+    function int min(int a, int b) {
+        if(a < b) {
+            return a;
+        }
+
+        return b;    
+    }
+}

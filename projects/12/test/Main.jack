@@ -1,0 +1,7 @@
+class Main {
+    function void main() {                
+        // do Output.printInt(Main.sqrt(32767));                  
+        // do Output.println();    
+        return;
+    }
+}

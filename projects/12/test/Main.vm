@@ -1,0 +1,231 @@
+function Main.main 0
+push constant 20000
+call Main.rightShift 1
+call Output.printInt 1
+pop temp 0
+call Output.println 0
+pop temp 0
+push constant 0
+return
+function Main.rightShift 3
+push constant 1
+pop local 1
+label WHILE_EXP0
+push local 1
+push argument 0
+lt
+push local 1
+push constant 16384
+lt
+and
+not
+if-goto WHILE_END0
+push local 1
+pop local 2
+push local 1
+push constant 2
+call Math.multiply 2
+pop local 1
+push argument 0
+push local 1
+and
+push constant 0
+gt
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 0
+push local 2
+add
+pop local 0
+label IF_FALSE0
+goto WHILE_EXP0
+label WHILE_END0
+push local 0
+return
+function Main.sqrt 2
+push argument 0
+pop local 0
+push constant 0
+pop local 1
+label WHILE_EXP0
+push local 0
+push local 1
+gt
+not
+if-goto WHILE_END0
+push local 0
+push local 1
+add
+push constant 2
+call Main.divide 2
+pop local 0
+push argument 0
+push local 0
+call Main.divide 2
+pop local 1
+goto WHILE_EXP0
+label WHILE_END0
+push local 0
+return
+function Main.divide 6
+push argument 0
+push constant 0
+lt
+push argument 1
+push constant 0
+gt
+and
+push argument 0
+push constant 0
+gt
+push argument 1
+push constant 0
+lt
+and
+or
+pop local 5
+push argument 0
+call Math.abs 1
+pop local 1
+push argument 1
+call Math.abs 1
+pop local 2
+push local 2
+push local 1
+gt
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 0
+return
+label IF_FALSE0
+push local 2
+push constant 16383
+gt
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push local 5
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push constant 1
+neg
+return
+label IF_FALSE2
+push constant 1
+return
+label IF_FALSE1
+push local 1
+push local 2
+push constant 2
+call Main.multiply 2
+call Main.divide 2
+pop local 0
+push local 0
+push constant 2
+call Main.multiply 2
+pop local 3
+push local 1
+push local 0
+push local 2
+call Main.multiply 2
+push constant 2
+call Main.multiply 2
+sub
+pop local 4
+push local 4
+push local 2
+gt
+push local 4
+push local 2
+eq
+or
+if-goto IF_TRUE3
+goto IF_FALSE3
+label IF_TRUE3
+push local 3
+push constant 1
+add
+pop local 3
+label IF_FALSE3
+push local 5
+if-goto IF_TRUE4
+goto IF_FALSE4
+label IF_TRUE4
+push local 3
+neg
+return
+label IF_FALSE4
+push local 3
+return
+function Main.multiply 5
+push argument 0
+call Math.abs 1
+pop local 3
+push argument 1
+call Math.abs 1
+pop local 4
+push local 3
+pop local 1
+push constant 1
+pop local 2
+label WHILE_EXP0
+push local 2
+push constant 16385
+lt
+push local 2
+push constant 0
+gt
+and
+not
+if-goto WHILE_END0
+push local 4
+push local 2
+and
+push constant 0
+eq
+not
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 0
+push local 1
+add
+pop local 0
+label IF_FALSE0
+push local 1
+push local 1
+add
+pop local 1
+push local 2
+push local 2
+add
+pop local 2
+goto WHILE_EXP0
+label WHILE_END0
+push argument 0
+push constant 0
+lt
+push argument 1
+push constant 0
+gt
+and
+push argument 0
+push constant 0
+gt
+push argument 1
+push constant 0
+lt
+and
+or
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push local 0
+neg
+return
+label IF_FALSE1
+push local 0
+return
