@@ -3,9 +3,27 @@
  * Note: Jack compilers implement multiplication and division using OS method calls.
  */
 class Math {
+    static Array powersOf2;
 
     /** Initializes the library. */
     function void init() {
+        let powersOf2 = Array.new(15);
+        let powersOf2[0] = 1;
+        let powersOf2[1] = 2;
+        let powersOf2[2] = 4;
+        let powersOf2[3] = 8;
+        let powersOf2[4] = 16;
+        let powersOf2[5] = 32;
+        let powersOf2[6] = 64;
+        let powersOf2[7] = 128;
+        let powersOf2[8] = 256;
+        let powersOf2[9] = 512;
+        let powersOf2[10] = 1024;
+        let powersOf2[11] = 2048;
+        let powersOf2[12] = 4096;
+        let powersOf2[13] = 8192;
+        let powersOf2[14] = 16384;
+
         return;
     }
 
@@ -23,19 +41,30 @@ class Math {
      *  the Jack expressions x*y and multiply(x,y) return the same value.
      */
     function int multiply(int x, int y) {
-        var int sum, shiftedX, i;        
-        let shiftedX = x;
-        let i = 1;
+        var int sum, shiftedX, i, absX, absY;
+        let absX = Math.abs(x);
+        let absY = Math.abs(y);
+        let shiftedX = absX;
+        let i = 0;        
 
-        while(y > i) {
-            if(~(y & i = 0)) {
+        while(i < 15) {                              
+            if(~(Math.bit(absY, i) = 0)) {
                 let sum = sum + shiftedX;        
             }
             let shiftedX = shiftedX + shiftedX;
-            let i = i + i;
+            let i = i + 1;                    
         }
 
-        return 300;
+        if(((x < 0) & (y > 0)) | ((x > 0) & (y < 0)))  {
+            return -sum;
+        }
+
+        return sum; 
+    }
+
+    /** Returns i-th bit of integer */
+    function int bit(int x, int i) {
+        return x & powersOf2[i];
     }
 
     /** Returns the integer part of x/y.
@@ -44,36 +73,71 @@ class Math {
      *  the Jack expressions x/y and divide(x,y) return the same value.
      */
     function int divide(int x, int y) {
-        var int q;
-        if(y < x) {
+        var int q, absX, absY, result, temp;        
+        var boolean isNeg;
+
+        let isNeg = ((x < 0) & (y > 0)) | ((x > 0) & (y < 0));
+
+        let absX = Math.abs(x);
+        let absY = Math.abs(y);
+
+        if(absY > absX) {
             return 0;
         }
         
-        let q = divide(x, multiply(y, 2));
-
-        if((x - multiply(multiply(q, y), 2)) < y) {
-            return multiply(q, 2);
-        } else {
-            return multiply(q, 2) + 1;
-        }                
-    }
-
-    /** Returns the integer part of the square root of x. */
-    function int sqrt(int x) {
-        var int result, i, j;
-        let i = divide(x, 2) - 1;
-
-        while(i > 0) {
-            let j = result + 2;
-
-            if((j * j < x) | (j * j = x)) {
-                result = j;
+        if(absY > (powersOf2[14] - 1)) {                        
+            if(isNeg) {
+                return -1;     
             }
+            return 1;
+        }
+
+        let q = Math.divide(absX, absY + absY);        
+        let result = q + q;
+        let temp = absX - Math.multiply(result, absY);
+
+        if((temp > absY) | (temp = absY)) {
+            let result = result + 1;
+        }
+
+        if(isNeg) {
+            return -result;            
         }
 
         return result;
     }
 
+
+    /** Returns the integer part of the square root of x. */
+    function int sqrt(int x) {   
+        var int result, temp;
+        let result = x;
+
+        let temp = 0;
+        
+        while(result > temp) {                        
+            let result = Math.rightShift(result + temp);
+            let temp = Math.divide(x, result);
+        }        
+
+        return result;
+    }
+
+    function int rightShift(int n) {
+        var int result, i;
+        let i = 1;
+        
+        while((powersOf2[i] < n) & (i < 15)) {
+            if(Math.bit(n, i) > 0) {
+                let result = result + powersOf2[i - 1] ;        
+            }            
+            let i = i + 1;
+        }
+
+        return result;
+    }
+
+    /** Returns power of x to exponent exp */
     function int pow(int base, int exp) {
         var int result;
         let result = 1;
