@@ -1,0 +1,36 @@
+class Score {
+	field int x, y, score;
+
+	constructor Score new(int argX, int argY) {
+		let x = argX;
+		let y = argY;
+		let score = 0;
+
+		do render();
+		return this;
+	}	
+
+	method void dispose() {
+		do Memory.deAlloc(this);
+		return;
+	}
+
+	method int getScore() {
+		return score;
+	}
+
+	method void render() {
+		var String label;
+		let label = "Score: ";
+		do Output.moveCursor(y, x);
+		do Output.printString(label);
+		do Output.printInt(score);
+		do label.dispose();
+		return;
+	}
+
+	method void inc() {		
+		let score = score + 1;
+		return;
+	}
+}

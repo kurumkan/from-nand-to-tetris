@@ -1,0 +1,62 @@
+class Board {
+	field int x, y, width;
+
+	constructor Board new(int argX, int argY, int argWidth) {
+		let x = argX;
+		let y = argY;
+		let width = argWidth;
+		do draw();
+		return this;
+	}	
+
+	method int getX() {
+		return x;
+	}
+
+	method int getY() {
+		return y;
+	}
+
+	method int getWidth() {
+		return width;
+	}	
+
+	method void dispose() {
+		do Memory.deAlloc(this);
+		return;
+	}
+
+	method void draw() {
+		do Screen.setColor(true);
+      	do Screen.drawRectangle(x, y, x + width, y + 10);
+		return;
+	}
+
+	method void erase() {
+		do Screen.setColor(false);
+		do Screen.drawRectangle(x, y, x + width, y + 10);
+		return;
+	}
+
+	method void moveLeft() {
+		if (x > 1) {
+			do Screen.setColor(false);
+			do Screen.drawRectangle((x + width) - 1, y, x + width, y + 10);
+			let x = x - 2;
+			do Screen.setColor(true);
+			do Screen.drawRectangle(x, y, x + 1, y + 10);
+		}
+		return;
+	}
+
+	method void moveRight() {
+		if ((x + width) < 510) {
+			do Screen.setColor(false);
+			do Screen.drawRectangle(x, y, x + 1, y + 10);
+			let x = x + 2;
+			do Screen.setColor(true);
+			do Screen.drawRectangle((x + width) - 1, y, x + width, y + 10);
+		}
+		return;
+	}
+}
