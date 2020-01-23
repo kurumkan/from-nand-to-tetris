@@ -101,6 +101,8 @@ public class SymbolTable {
         
         return el.getIndex();
     }
+
+    @Override
     public String toString() {
         String result = "";
         for (Entry<String, SymbolTableElement> current : classScope.entrySet()) {

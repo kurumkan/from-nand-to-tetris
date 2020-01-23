@@ -28,7 +28,7 @@ public class Compiler {
                     String outputPath = filePath.substring(0, filePath.length() - 5) + ".vm";;
                     writer = new BufferedWriter(new FileWriter(outputPath));
                     vmWriter = new VmWriter(writer);
-                    engine = new CompilationEngine(tokenizer, writer, vmWriter);                
+                    engine = new CompilationEngine(tokenizer, vmWriter);                
                     engine.compileClass();                    
                     writer.close();
                     vmWriter.close();
@@ -38,7 +38,7 @@ public class Compiler {
                 tokenizer = new Tokenizer(src);                
                 BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath)); 
                 VmWriter vmWriter = new VmWriter(writer);
-                engine = new CompilationEngine(tokenizer, writer, vmWriter);                
+                engine = new CompilationEngine(tokenizer, vmWriter);                
                 engine.compileClass();                
                 writer.close();
                 vmWriter.close();

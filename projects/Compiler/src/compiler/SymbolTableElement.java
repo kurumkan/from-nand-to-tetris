@@ -1,9 +1,9 @@
 package compiler;
 
 public class SymbolTableElement {
-    private String kind;
-    private String type;
-    private int index;
+    private final String kind;
+    private final String type;
+    private final int index;
     
     public SymbolTableElement(String type, String kind, int index) {
         this.kind = kind;
@@ -22,6 +22,7 @@ public class SymbolTableElement {
     public int getIndex() {
         return index;
     }
+
     @Override
     public String toString() {
         return kind + ", " +  type + ", " + index;

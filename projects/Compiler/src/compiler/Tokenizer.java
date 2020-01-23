@@ -14,11 +14,11 @@ import java.util.regex.Pattern;
 public class Tokenizer {
     // Removes all space characters from input stream
     // Converts them into tokens according to the grammar
-    private BufferedReader reader;
+    private final BufferedReader reader;
     private String nextToken;
     private String currentToken;    
         
-    private List<String>  currentTokenArray;    
+    private final List<String>  currentTokenArray;    
     
     public Tokenizer(File inputFile) throws Exception {
         this.reader = new BufferedReader(new FileReader(inputFile));  

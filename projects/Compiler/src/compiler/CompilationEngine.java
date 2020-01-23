@@ -1,20 +1,17 @@
 package compiler;
 import static compiler.TokenTypes.*;
-import java.io.BufferedWriter;
 
 public class CompilationEngine {
     // Gets input from tokenizer
     // Write parsed structure to the output stream
-    private Tokenizer tokenizer;
-    private VmWriter vmWriter;
+    private final Tokenizer tokenizer;
+    private final VmWriter vmWriter;
     private SymbolTable symbolTable;
-    private BufferedWriter writer;
     private String className;    
     private int labelId;
     
-    public CompilationEngine(Tokenizer tokenizer, BufferedWriter writer, VmWriter vmWriter) throws Exception {
+    public CompilationEngine(Tokenizer tokenizer, VmWriter vmWriter) throws Exception {
         this.tokenizer = tokenizer;
-        this.writer = writer;
         this.vmWriter = vmWriter;
     }
     public void compileClass() throws Exception {
@@ -300,8 +297,6 @@ public class CompilationEngine {
             int index = symbolTable.indexOf(varName);   
             vmWriter.writePush(segment, index);
             vmWriter.writeArithmetic("add");
-        } else {
-            
         }
        
         eat("=");                

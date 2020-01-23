@@ -1,0 +1,14 @@
+1. Choose a topic for your final project by yourself.
+
+2. Requirements - what should the project contain?
+a) at least 3 classes
+b) at least 1 inheritance
+c) the use of the polymorphism
+d) at least one interface
+e) correct use of encapsulation (public, private)
+f) handling of exceptions
+g) unit tests
+
+3. Send the project or link to git by email (dagmara.zellma@gmail.com) until 26.01.2020
+
+4. On 26.01.2020 will be the project presentation (I will ask you to run the program and tell me what it does).
