@@ -8,6 +8,8 @@ public class Compiler {
         try {
             String inputPath = args[0].trim();
             File src = new File(inputPath);
+            String outputType = args[1].trim();
+            
             CompilationEngine engine;  
             Tokenizer tokenizer;            
                     
@@ -16,8 +18,8 @@ public class Compiler {
                     throw new Exception("Folder must contain Main.jack file");
                 }
                 
-                BufferedWriter writer;
-                VmWriter vmWriter;
+                BufferedWriter bufferedWriter;
+                Writer writer;
                 
                 File[] files = src.listFiles((d, fileName) -> fileName.endsWith(".jack"));
                         
@@ -25,23 +27,21 @@ public class Compiler {
                     File file = files[i];                    
                     tokenizer = new Tokenizer(file);         
                     String filePath = file.getAbsolutePath();
-                    String outputPath = filePath.substring(0, filePath.length() - 5) + ".vm";;
-                    writer = new BufferedWriter(new FileWriter(outputPath));
-                    vmWriter = new VmWriter(writer);
-                    engine = new CompilationEngine(tokenizer, vmWriter);                
+                    String outputPath = filePath.substring(0, filePath.length() - 5) + "." + outputType;
+                    bufferedWriter = new BufferedWriter(new FileWriter(outputPath));
+                    writer = outputType.equals("xml") ? new XmlWriter(bufferedWriter) : new VmWriter(bufferedWriter);
+                    engine = new CompilationEngine(tokenizer, writer);                
                     engine.compileClass();                    
                     writer.close();
-                    vmWriter.close();
                 }
             } else {
-                String outputPath = inputPath.substring(0, inputPath.length() - 5) + ".vm";
+                String outputPath = inputPath.substring(0, inputPath.length() - 5) + "." + outputType;
                 tokenizer = new Tokenizer(src);                
-                BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath)); 
-                VmWriter vmWriter = new VmWriter(writer);
-                engine = new CompilationEngine(tokenizer, vmWriter);                
+                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(outputPath)); 
+                Writer writer = outputType.equals("xml") ? new XmlWriter(bufferedWriter) : new VmWriter(bufferedWriter);
+                engine = new CompilationEngine(tokenizer, writer);                
                 engine.compileClass();                
                 writer.close();
-                vmWriter.close();
             }                       
         } catch(Exception e) {
             e.printStackTrace();

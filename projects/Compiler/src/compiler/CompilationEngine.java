@@ -5,12 +5,12 @@ public class CompilationEngine {
     // Gets input from tokenizer
     // Write parsed structure to the output stream
     private final Tokenizer tokenizer;
-    private final VmWriter vmWriter;
+    private final Writer vmWriter;
     private SymbolTable symbolTable;
     private String className;    
     private int labelId;
     
-    public CompilationEngine(Tokenizer tokenizer, VmWriter vmWriter) throws Exception {
+    public CompilationEngine(Tokenizer tokenizer, Writer vmWriter) throws Exception {
         this.tokenizer = tokenizer;
         this.vmWriter = vmWriter;
     }

@@ -1,0 +1,13 @@
+<code>
+<function>Main.main</function>
+<call>PongGame.new</call>
+<pop>local</pop>
+<push>local</push>
+<call>PongGame.run</call>
+<pop>temp</pop>
+<push>local</push>
+<call>PongGame.dispose</call>
+<pop>temp</pop>
+<push>constant</push>
+<return />
+</code>
